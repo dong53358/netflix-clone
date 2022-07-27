@@ -57,6 +57,9 @@ const Search = styled.span`
   svg {
     height: 25px;
   }
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Circle = styled(motion.span)`
