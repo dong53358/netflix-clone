@@ -61,7 +61,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   background-size: cover;
   background-position: center center;
   height: 200px;
-  color: red;
+  color: white;
   font-size: 20px;
   &:first-child {
     transform-origin: center left;
