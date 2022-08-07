@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
+import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
@@ -43,6 +43,7 @@ const Overview = styled.p`
 `;
 
 const Slider = styled.div`
+  display: flex;
   position: relative;
   top: -100px;
 `;
@@ -98,15 +99,39 @@ const BigMovie = styled(motion.div)`
   display: flex;
   flex-direction: column;
   //justify-content: center;
-  align-items: center;
+  //align-items: center;
   position: absolute;
   width: 30vw;
-  height: 50vh;
+  height: 70vh;
   left: 0;
   right: 0;
   margin: 0 auto;
-  background-color: gray;
-  border-radius: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  border-radius: 20px;
+  overflow: hidden;
+`;
+
+const BigCover = styled.div`
+  width: 100%;
+  height: 350px;
+  background-size: cover;
+  background-position: center center;
+`;
+
+const BigTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+  padding: 20px;
+  font-size: 36px;
+  position: relative;
+  top: -80px;
+`;
+
+const BigOverview = styled.p`
+  color: ${(props) => props.theme.white.lighter};
+  padding: 20px;
+  font-size: 20px;
+  position: relative;
+  top: -80px;
 `;
 
 const rowVariants = {
@@ -152,7 +177,7 @@ const offset = 6;
 function Home() {
   const navigate = useNavigate();
   const bigMovieMatch = useMatch("/movies/:movieId");
-  const { scrollY } = useViewportScroll();
+  const { scrollY } = useScroll();
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
@@ -182,7 +207,6 @@ function Home() {
     data?.results.find(
       (movie) => movie.id + "" === bigMovieMatch.params.movieId
     );
-  console.log(clickedMovie);
   return (
     <Wrapper>
       {isLoading ? (
@@ -247,10 +271,16 @@ function Home() {
                 >
                   {clickedMovie && (
                     <>
-                      <img
-                        src={makeImagePath(clickedMovie.backdrop_path, "w500")}
+                      <BigCover
+                        style={{
+                          backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
+                            clickedMovie.backdrop_path,
+                            "w500"
+                          )})`,
+                        }}
                       />
-                      <h2>{clickedMovie.title}</h2>
+                      <BigTitle>{clickedMovie.title}</BigTitle>
+                      <BigOverview>{clickedMovie.overview}</BigOverview>
                     </>
                   )}
                 </BigMovie>
