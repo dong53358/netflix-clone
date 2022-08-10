@@ -6,6 +6,7 @@ import {
   getMovieVedio,
   getTvs,
   getTvVedio,
+  getTvVedio2,
   IGetMoviesResult,
   IGetTvResult,
   IGetVideosResult,
@@ -15,6 +16,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import MovieSlider from "../Components/movie/MovieSlider";
 import { FaStar } from "react-icons/fa";
 import TvSlider from "../Components/tv/TvSlider";
+import { useEffect } from "react";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -78,25 +80,28 @@ const Overview = styled.div`
 `;
 
 function Tv() {
-  const { data: tvTrailerData, isLoading: tvTrailerDataLoding } =
-    useQuery<IGetVideosResult>(["tv"], () => getTvVedio(String("197067")));
+  const { data: popularData, isLoading: popularDataLoding } =
+    useQuery<IGetTvResult>(["tv", "popular"], () => getTvs("popular"));
+
+  //localStorage.setItem("localId", String(popularData?.results[1].id));
+
+  const zz = localStorage.getItem("localId");
+
+  const { data: tvTrailerData } = useQuery<IGetVideosResult>(["tv"], () =>
+    getTvVedio(zz)
+  );
 
   const { data: nowData, isLoading: nowDataLoding } = useQuery<IGetTvResult>(
     ["tv", "on_the_air"],
     () => getTvs("on_the_air")
   );
+
   const { data: topTvData, isLoading: topTvDataLoding } =
     useQuery<IGetTvResult>(["tv", "top_rated"], () => getTvs("top_rated"));
 
-  const { data: popularData, isLoading: popularDataLoding } =
-    useQuery<IGetTvResult>(["tv", "popular"], () => getTvs("popular"));
-
   return (
     <Wrapper>
-      {tvTrailerDataLoding &&
-      nowDataLoding &&
-      topTvDataLoding &&
-      popularDataLoding ? (
+      {nowDataLoding && topTvDataLoding && popularDataLoding ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
@@ -112,7 +117,7 @@ function Tv() {
                 </HelmetProvider>
                 <Video>
                   <ReactPlayer
-                    url={makeTrailerPath(tvTrailerData?.results[0].key || "")}
+                    url={makeTrailerPath(tvTrailerData.results[0].key || "")}
                     volume={0.3}
                     controls={false}
                     playing={true}
@@ -124,10 +129,10 @@ function Tv() {
                     playsinline={false}
                   ></ReactPlayer>
                   <Banner>
-                    <Title>{nowData?.results[14].name}</Title>
+                    <Title>{popularData?.results[1].name}</Title>
                     <Overview>
                       <FaStar />
-                      {nowData?.results[14].vote_average}
+                      {popularData?.results[1].vote_average}
                     </Overview>
                   </Banner>
                 </Video>

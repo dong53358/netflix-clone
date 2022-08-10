@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
+import { getMovies, getTvs, IGetMoviesResult, IGetTvResult } from "../api";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -149,7 +151,6 @@ function Header() {
     console.log(data);
     history(`/search?keyword=${data.keyword}`);
   };
-
   return (
     <Nav variants={navVariants} initial={"top"} animate={navAnimation}>
       <Col>

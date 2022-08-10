@@ -8,7 +8,7 @@ export interface IMovie {
 }
 
 export const movidIdState = atom<IMovie[]>({
-  key: "movieId",
+  key: "localId",
   default: [],
   effects_UNSTABLE: [persistAtom],
 });

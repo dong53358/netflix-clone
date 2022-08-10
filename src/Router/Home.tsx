@@ -4,7 +4,9 @@ import styled from "styled-components";
 import {
   getMovies,
   getMovieVedio,
+  getTvs,
   IGetMoviesResult,
+  IGetTvResult,
   IGetVideosResult,
 } from "../api";
 import { makeTrailerPath } from "../utils";
@@ -71,10 +73,7 @@ const Overview = styled.p`
 
 function Home() {
   const { data: trailerData, isLoading: trailerDataLoding } =
-    useQuery<IGetVideosResult>(["videos"], () =>
-      getMovieVedio(String("616037"))
-    );
-
+    useQuery<IGetVideosResult>(["videos"], () => getMovieVedio("616037"));
   const { data: nowData, isLoading: nowDataLoding } =
     useQuery<IGetMoviesResult>(["movie", "now"], () =>
       getMovies("now_playing")
@@ -86,6 +85,12 @@ function Home() {
     useQuery<IGetMoviesResult>(["movie", "upcoming"], () =>
       getMovies("upcoming")
     );
+
+  const { data: popularData } = useQuery<IGetTvResult>(["tv", "popular"], () =>
+    getTvs("popular")
+  );
+
+  localStorage.setItem("localId", String(popularData?.results[1].id));
 
   return (
     <Wrapper>

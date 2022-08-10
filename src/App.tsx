@@ -6,7 +6,8 @@ import Home from "./Router/Home";
 import Tv from "./Router/Tv";
 import Search from "./Router/Search";
 import Header from "./Components/Header";
-import TvDetail from "./Components/tv/TvDetail";
+import { useQuery } from "react-query";
+import { getMovies, IGetMoviesResult } from "./api";
 
 function App() {
   return (

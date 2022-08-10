@@ -96,8 +96,8 @@ export function getMovieVedio2(moiveId: string) {
 }
 
 export function getTvs(kind: string) {
-  return fetch(`${BASE_PATH}tv/${kind}?api_key=${API_KEY}&language=ko`).then(
-    (response) => response.json()
+  return fetch(`${BASE_PATH}tv/${kind}?api_key=${API_KEY}`).then((response) =>
+    response.json()
   );
 }
 
@@ -106,13 +106,13 @@ export function getTvDetails(id: string) {
     (response) => response.json()
   );
 }
-
+// 토르 616037
 // 우영우 Id : 197067
 // 러브아일랜드 Id : 90521
-export function getTvVedio(moiveId: string) {
-  return fetch(
-    `${BASE_PATH}tv/${moiveId}/videos?api_key=${API_KEY}&language=ko`
-  ).then((response) => response.json());
+export function getTvVedio(tvId: string) {
+  return fetch(`${BASE_PATH}tv/${tvId}/videos?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
 }
 export function getTvVedio2(moiveId: string) {
   return fetch(`${BASE_PATH}tv/${moiveId}/videos?api_key=${API_KEY}`).then(
