@@ -4,9 +4,14 @@ import { FaAngleRight, FaStar } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { Navigate, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { getMovieDetails, IGetDetailMovies, IGetMoviesResult } from "../../api";
+import {
+  getMovieDetails,
+  IGetDetailMovies,
+  IGetMoviesResult,
+  IGetTvResult,
+} from "../../api";
 import { makeImagePath } from "../../utils";
-import MovieDetail from "./MovieDetail";
+import TvDetail from "./TvDetail";
 
 const Slider = styled.div`
   position: relative;
@@ -166,28 +171,28 @@ const offset = 6;
 
 interface IProps {
   kind: string;
-  data?: IGetMoviesResult;
+  data?: IGetTvResult;
 }
 
-function MovieSlider({ kind, data }: IProps) {
+function TvSlider({ kind, data }: IProps) {
   const [titmeName, setTitleName] = useState("");
 
   useEffect(() => {
     switch (kind) {
-      case "now":
-        setTitleName("상영중인 영화");
+      case "on_the_air":
+        setTitleName("최신 TV 프로그램");
         break;
-      case "top":
-        setTitleName("평점높은 영화");
+      case "top_rated":
+        setTitleName("최고 평점 TV 프로그램");
         break;
-      case "upcomming":
-        setTitleName("개봉예정 영화");
+      case "popular":
+        setTitleName("인기 TV 프로그램");
         break;
     }
   }, [kind]);
 
   const navigate = useNavigate();
-  const bigMovieMatch = useMatch("/movies/:movieId");
+  const bigTvMatch = useMatch("/tv/:tvId");
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => {
@@ -203,12 +208,12 @@ function MovieSlider({ kind, data }: IProps) {
     }
   };
 
-  const onBoxClicked = (movieId: number) => {
-    navigate(`/movies/${movieId}`);
+  const onBoxClicked = (tvId: number) => {
+    navigate(`/tv/${tvId}`);
   };
   const { scrollY } = useScroll();
   const onOverlayClick = () => {
-    navigate("/");
+    navigate("/tv");
   };
   return (
     <>
@@ -229,25 +234,25 @@ function MovieSlider({ kind, data }: IProps) {
             {data?.results
               .slice(1)
               .slice(offset * index, offset * index + offset)
-              .map((movie) => (
+              .map((tv) => (
                 <Box
-                  layoutId={movie.id + ""}
-                  onClick={() => onBoxClicked(movie.id)}
-                  key={movie.id}
+                  //layoutId={tv.id + ""}
+                  onClick={() => onBoxClicked(tv.id)}
+                  key={tv.id}
                   variants={boxVarints}
                   whileHover="hover"
                   initial="normal"
                   transition={{
                     type: "tween",
                   }}
-                  bgphoto={makeImagePath(movie.backdrop_path, "w400")}
+                  bgphoto={makeImagePath(tv.backdrop_path, "w400")}
                 >
-                  <div>{movie.title}</div>
+                  <div>{tv.name}</div>
                   <Info variants={infoVariants}>
                     <div>
                       <FaStar />
                     </div>
-                    <div>{movie.vote_average}</div>
+                    <div>{tv.vote_average}</div>
                   </Info>
                 </Box>
               ))}
@@ -255,7 +260,7 @@ function MovieSlider({ kind, data }: IProps) {
         </AnimatePresence>
       </Slider>
       <AnimatePresence>
-        {bigMovieMatch && (
+        {bigTvMatch && (
           <>
             <Overlay
               onClick={onOverlayClick}
@@ -264,13 +269,13 @@ function MovieSlider({ kind, data }: IProps) {
               exit={{ opacity: 0 }}
             />
             <BigBox
-              layoutId={bigMovieMatch?.params.movieId}
+              //layoutId={bigTvMatch?.params.tvId}
               style={{
                 top: scrollY.get() + 50,
               }}
             >
-              {bigMovieMatch ? (
-                <MovieDetail id={bigMovieMatch.params.movieId} kind={kind} />
+              {bigTvMatch ? (
+                <TvDetail id={bigTvMatch.params.tvId} kind={kind} />
               ) : null}
             </BigBox>
           </>
@@ -280,4 +285,4 @@ function MovieSlider({ kind, data }: IProps) {
   );
 }
 
-export default MovieSlider;
+export default TvSlider;

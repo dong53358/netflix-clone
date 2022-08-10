@@ -70,12 +70,9 @@ const Overview = styled.p`
 `;
 
 function Home() {
-  localStorage.setItem("movieId", "616037");
-  const stateMovieId = localStorage.getItem("movieId");
-
   const { data: trailerData, isLoading: trailerDataLoding } =
     useQuery<IGetVideosResult>(["videos"], () =>
-      getMovieVedio(String(stateMovieId))
+      getMovieVedio(String("616037"))
     );
 
   const { data: nowData, isLoading: nowDataLoding } =

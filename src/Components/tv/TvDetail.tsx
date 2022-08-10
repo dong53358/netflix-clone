@@ -5,7 +5,10 @@ import {
   getMovieDetails,
   getMovieVedio,
   getMovieVedio2,
+  getTvDetails,
+  getTvVedio2,
   IGetDetailMovies,
+  IGetDetailTvs,
   IGetVideosResult,
 } from "../../api";
 import { useQuery } from "react-query";
@@ -55,9 +58,6 @@ const BigTitle = styled.div`
   span:first-child {
     margin-right: 30px;
   }
-  span:nth-child(2) {
-    margin-right: 30px;
-  }
   span:last-child {
     font-size: 17px;
     color: red;
@@ -77,15 +77,15 @@ interface IProps {
   kind: string;
 }
 
-function MovieDetail({ id, kind }: IProps) {
+function TvDetail({ id, kind }: IProps) {
   const { data: detailData, isLoading: detailDataLoding } =
-    useQuery<IGetDetailMovies>(["movie", `${kind}_detail`], () =>
-      getMovieDetails(id)
+    useQuery<IGetDetailTvs>(["movie", `${kind}_detail`], () =>
+      getTvDetails(id)
     );
 
   const { data: trailerData, isLoading: trailerDataLoding } =
     useQuery<IGetVideosResult>(["videos", `{id}_videos`], () =>
-      getMovieVedio2(id)
+      getTvVedio2(id)
     );
   const NETFLIX = "rGrxaNUPozA";
   return (
@@ -114,8 +114,7 @@ function MovieDetail({ id, kind }: IProps) {
             <Banner />
             <div>
               <BigTitle>
-                <span>{detailData.title}</span>
-                <span>{detailData.runtime}분</span>
+                <span>{detailData.name}</span>
                 <span>
                   {detailData.genres.map((genre) => (
                     <span key={genre.id}>{genre.name}</span>
@@ -131,4 +130,4 @@ function MovieDetail({ id, kind }: IProps) {
   );
 }
 
-export default MovieDetail;
+export default TvDetail;
