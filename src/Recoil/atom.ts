@@ -3,12 +3,8 @@ import { recoilPersist } from "recoil-persist";
 
 const { persistAtom } = recoilPersist();
 
-export interface IMovie {
-  id: number;
-}
-
-export const movidIdState = atom<IMovie[]>({
-  key: "localId",
-  default: [],
+export const IdState = atom<string>({
+  key: "localMovieId",
+  default: "",
   effects_UNSTABLE: [persistAtom],
 });

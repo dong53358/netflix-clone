@@ -83,12 +83,8 @@ function Tv() {
   const { data: popularData, isLoading: popularDataLoding } =
     useQuery<IGetTvResult>(["tv", "popular"], () => getTvs("popular"));
 
-  //localStorage.setItem("localId", String(popularData?.results[1].id));
-
-  const zz = localStorage.getItem("localId");
-
   const { data: tvTrailerData } = useQuery<IGetVideosResult>(["tv"], () =>
-    getTvVedio(zz)
+    getTvVedio("66732")
   );
 
   const { data: nowData, isLoading: nowDataLoding } = useQuery<IGetTvResult>(
@@ -117,7 +113,7 @@ function Tv() {
                 </HelmetProvider>
                 <Video>
                   <ReactPlayer
-                    url={makeTrailerPath(tvTrailerData.results[0].key || "")}
+                    url={makeTrailerPath(tvTrailerData?.results[0].key || "")}
                     volume={0.3}
                     controls={false}
                     playing={true}
@@ -129,10 +125,10 @@ function Tv() {
                     playsinline={false}
                   ></ReactPlayer>
                   <Banner>
-                    <Title>{popularData?.results[1].name}</Title>
+                    <Title>{popularData?.results[2].name}</Title>
                     <Overview>
                       <FaStar />
-                      {popularData?.results[1].vote_average}
+                      {popularData?.results[2].vote_average}
                     </Overview>
                   </Banner>
                 </Video>

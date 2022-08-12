@@ -71,6 +71,24 @@ export interface ITv {
   vote_average: number;
 }
 
+export interface ISearch {
+  page: number;
+  results: ISearchData[];
+  known_for: ISearchData[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface ISearchData {
+  backdrop_path: string;
+  poster_path: string;
+  id: number;
+  name: string;
+  title: string;
+  overview: string;
+  vote_average: number;
+}
+
 export function getMovies(kind: string) {
   return fetch(
     `${BASE_PATH}movie/${kind}?api_key=${API_KEY}&language=ko&page=1&region=kr`
@@ -114,8 +132,14 @@ export function getTvVedio(tvId: string) {
     (response) => response.json()
   );
 }
-export function getTvVedio2(moiveId: string) {
-  return fetch(`${BASE_PATH}tv/${moiveId}/videos?api_key=${API_KEY}`).then(
+export function getTvVedio2(tvId: string) {
+  return fetch(`${BASE_PATH}tv/${tvId}/videos?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
+}
+
+export function search(query: string) {
+  return fetch(
+    `${BASE_PATH}search/multi?api_key=${API_KEY}&query=${query}`
+  ).then((response) => response.json());
 }

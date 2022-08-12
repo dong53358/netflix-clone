@@ -240,7 +240,11 @@ function MovieSlider({ kind, data }: IProps) {
                   transition={{
                     type: "tween",
                   }}
-                  bgphoto={makeImagePath(movie.backdrop_path, "w400")}
+                  bgphoto={
+                    movie.backdrop_path
+                      ? makeImagePath(movie.backdrop_path, "w400")
+                      : "/assets/netflix.png"
+                  }
                 >
                   <div>{movie.title}</div>
                   <Info variants={infoVariants}>

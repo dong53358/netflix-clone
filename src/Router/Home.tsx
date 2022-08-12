@@ -12,6 +12,9 @@ import {
 import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import MovieSlider from "../Components/movie/MovieSlider";
+import { useEffect } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { IdState } from "../Recoil/atom";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -72,12 +75,13 @@ const Overview = styled.p`
 `;
 
 function Home() {
-  const { data: trailerData, isLoading: trailerDataLoding } =
-    useQuery<IGetVideosResult>(["videos"], () => getMovieVedio("616037"));
   const { data: nowData, isLoading: nowDataLoding } =
     useQuery<IGetMoviesResult>(["movie", "now"], () =>
       getMovies("now_playing")
     );
+  const { data: trailerData, isLoading: trailerDataLoding } =
+    useQuery<IGetVideosResult>(["videos"], () => getMovieVedio("616037"));
+
   const { data: topMovieData, isLoading: topMovieDataLoding } =
     useQuery<IGetMoviesResult>(["movie", "top"], () => getMovies("top_rated"));
 
@@ -85,13 +89,6 @@ function Home() {
     useQuery<IGetMoviesResult>(["movie", "upcoming"], () =>
       getMovies("upcoming")
     );
-
-  const { data: popularData } = useQuery<IGetTvResult>(["tv", "popular"], () =>
-    getTvs("popular")
-  );
-
-  localStorage.setItem("localId", String(popularData?.results[1].id));
-
   return (
     <Wrapper>
       {trailerDataLoding &&

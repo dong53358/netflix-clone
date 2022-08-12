@@ -1,14 +1,9 @@
-import React from "react";
-import styled from "styled-components";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./Router/Home";
 import Tv from "./Router/Tv";
 import Search from "./Router/Search";
 import Header from "./Components/Header";
-import { useQuery } from "react-query";
-import { getMovies, IGetMoviesResult } from "./api";
-
 function App() {
   return (
     <BrowserRouter>
@@ -19,6 +14,7 @@ function App() {
         <Route path="/tv" element={<Tv />}></Route>
         <Route path="/tv/:Id" element={<Tv />}></Route>
         <Route path="/search" element={<Search />}></Route>
+        <Route path="/search/:searchId" element={<Search />}></Route>
       </Routes>
     </BrowserRouter>
   );

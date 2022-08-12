@@ -3,8 +3,6 @@ import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
-import { getMovies, getTvs, IGetMoviesResult, IGetTvResult } from "../api";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -148,7 +146,6 @@ function Header() {
   const history = useNavigate();
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data: IForm) => {
-    console.log(data);
     history(`/search?keyword=${data.keyword}`);
   };
   return (

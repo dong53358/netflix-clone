@@ -37,7 +37,6 @@ const Video = styled.div`
 const Banner = styled.div`
   width: 100%;
   height: 100vh;
-  background-color: yellow;
   opacity: 0;
   position: absolute;
   background-position: center center;
@@ -84,7 +83,7 @@ function MovieDetail({ id, kind }: IProps) {
     );
 
   const { data: trailerData, isLoading: trailerDataLoding } =
-    useQuery<IGetVideosResult>(["videos", `{id}_videos`], () =>
+    useQuery<IGetVideosResult>(["videos", `${id}_videos`], () =>
       getMovieVedio2(id)
     );
   const NETFLIX = "rGrxaNUPozA";

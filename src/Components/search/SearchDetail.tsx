@@ -1,21 +1,15 @@
+import { AnimatePresence } from "framer-motion";
+import ReactPlayer from "react-player";
+import { useQuery } from "react-query";
 import styled from "styled-components";
-import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { useMatch, useNavigate } from "react-router-dom";
 import {
   getMovieDetails,
-  getMovieVedio,
   getMovieVedio2,
-  getTvDetails,
   getTvVedio2,
   IGetDetailMovies,
-  IGetDetailTvs,
-  IGetTvResult,
   IGetVideosResult,
 } from "../../api";
-import { useQuery } from "react-query";
-import { makeImagePath, makeTrailerPath } from "../../utils";
-import ReactPlayer from "react-player";
-import { useEffect, useState } from "react";
+import { makeTrailerPath } from "../../utils";
 
 const Loader = styled.div`
   height: 50vh;
@@ -58,6 +52,9 @@ const BigTitle = styled.div`
   span:first-child {
     margin-right: 30px;
   }
+  span:nth-child(2) {
+    margin-right: 30px;
+  }
   span:last-child {
     font-size: 17px;
     color: red;
@@ -74,33 +71,30 @@ const BigOverview = styled.p`
 
 interface IProps {
   id: string;
-  kind: string;
 }
 
-function TvDetail({ id, kind }: IProps) {
+function SearchDetail({ id }: IProps) {
   const { data: detailData, isLoading: detailDataLoding } =
-    useQuery<IGetDetailTvs>(["movie", `${kind}_detail`], () =>
-      getTvDetails(id)
-    );
-
-  const { data: trailerData, isLoading: trailerDataLoding } =
-    useQuery<IGetVideosResult>(["videos", `{id}_videos`], () =>
-      getTvVedio2(id)
-    );
-
+    useQuery<IGetDetailMovies>(["movie"], () => getMovieDetails(id));
+  const { data: movieVideoData, isLoading: movieVideoDataLoding } =
+    useQuery<IGetVideosResult>(["videos"], () => getMovieVedio2(id));
+  const { data: tvVideoData, isLoading: tvVideoDataLoding } =
+    useQuery<IGetVideosResult>(["videos"], () => getTvVedio2(id));
   const NETFLIX = "rGrxaNUPozA";
   return (
     <AnimatePresence>
-      {detailDataLoding && trailerDataLoding ? (
+      {detailDataLoding && movieVideoDataLoding && tvVideoDataLoding ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
           <Video>
             <ReactPlayer
               url={
-                trailerData?.results[0] === undefined
-                  ? makeTrailerPath(NETFLIX)
-                  : makeTrailerPath(trailerData?.results[0].key || "")
+                movieVideoData?.results[0] !== undefined
+                  ? makeTrailerPath(movieVideoData?.results[0].key)
+                  : tvVideoData?.results[0] !== undefined
+                  ? makeTrailerPath(tvVideoData?.results[0].key)
+                  : makeTrailerPath(NETFLIX)
               }
               volume={0.3}
               controls={false}
@@ -115,16 +109,15 @@ function TvDetail({ id, kind }: IProps) {
             <Banner />
             <div>
               <BigTitle>
-                <span>{detailData.name}</span>
+                <span>{detailData.title}</span>
+                <span>{detailData.runtime}분</span>
                 <span>
                   {detailData.genres.map((genre) => (
                     <span key={genre.id}>{genre.name}</span>
                   ))}
                 </span>
               </BigTitle>
-              <BigOverview>
-                {detailData.overview ? detailData.overview : "등록되지 않음"}
-              </BigOverview>
+              <BigOverview>{detailData.overview}</BigOverview>
             </div>
           </Video>
         </>
@@ -133,4 +126,4 @@ function TvDetail({ id, kind }: IProps) {
   );
 }
 
-export default TvDetail;
+export default SearchDetail;

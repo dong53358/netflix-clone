@@ -245,7 +245,11 @@ function TvSlider({ kind, data }: IProps) {
                   transition={{
                     type: "tween",
                   }}
-                  bgphoto={makeImagePath(tv.backdrop_path, "w400")}
+                  bgphoto={
+                    tv.backdrop_path
+                      ? makeImagePath(tv.backdrop_path, "w400")
+                      : "/assets/netflix.png"
+                  }
                 >
                   <div>{tv.name}</div>
                   <Info variants={infoVariants}>
