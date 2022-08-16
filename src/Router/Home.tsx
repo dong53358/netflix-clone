@@ -95,38 +95,42 @@ function Home() {
       ) : (
         <>
           <Trailer>
-            <>
-              <HelmetProvider>
-                <Helmet>
-                  <title>MOVIE-NETFLIX</title>
-                </Helmet>
-              </HelmetProvider>
-              <Video>
-                <ReactPlayer
-                  url={
-                    trailerData?.results[0].key !== undefined
-                      ? makeTrailerPath(trailerData?.results[0].key)
-                      : makeTrailerPath(netflix)
-                  }
-                  volume={0.3}
-                  controls={false}
-                  playing={true}
-                  muted={false}
-                  loop={true}
-                  width="100%"
-                  height="calc(110vh)"
-                  pip={false}
-                  playsinline={false}
-                ></ReactPlayer>
-                <Banner>
-                  <Title>{nowData?.results[0].title}</Title>
-                  <Overview>{nowData?.results[0].overview}</Overview>
-                </Banner>
-              </Video>
-              <MovieSlider kind="now" data={nowData} />
-              <MovieSlider kind="top" data={topMovieData} />
-              <MovieSlider kind="upcomming" data={upcomingData} />
-            </>
+            {nowDataLoding ? (
+              <Loader>Loading...</Loader>
+            ) : (
+              <>
+                <HelmetProvider>
+                  <Helmet>
+                    <title>MOVIE-NETFLIX</title>
+                  </Helmet>
+                </HelmetProvider>
+                <Video>
+                  <ReactPlayer
+                    url={
+                      trailerData?.results[0].key !== undefined
+                        ? makeTrailerPath(trailerData?.results[0].key)
+                        : makeTrailerPath(netflix)
+                    }
+                    volume={0.3}
+                    controls={false}
+                    playing={true}
+                    muted={false}
+                    loop={true}
+                    width="100%"
+                    height="calc(110vh)"
+                    pip={false}
+                    playsinline={false}
+                  ></ReactPlayer>
+                  <Banner>
+                    <Title>{nowData?.results[0].title}</Title>
+                    <Overview>{nowData?.results[0].overview}</Overview>
+                  </Banner>
+                </Video>
+                <MovieSlider kind="now" data={nowData} />
+                <MovieSlider kind="top" data={topMovieData} />
+                <MovieSlider kind="upcomming" data={upcomingData} />
+              </>
+            )}
           </Trailer>
         </>
       )}
