@@ -1,22 +1,11 @@
 import ReactPlayer from "react-player";
 import { useQuery } from "react-query";
 import styled from "styled-components";
-import {
-  getMovies,
-  getMovieVedio,
-  getTvs,
-  getTvVedio,
-  getTvVedio2,
-  IGetMoviesResult,
-  IGetTvResult,
-  IGetVideosResult,
-} from "../api";
+import { getTvs, getTvVedio, IGetTvResult, IGetVideosResult } from "../api";
 import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import MovieSlider from "../Components/movie/MovieSlider";
 import { FaStar } from "react-icons/fa";
 import TvSlider from "../Components/tv/TvSlider";
-import { useEffect } from "react";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -125,10 +114,10 @@ function Tv() {
                     playsinline={false}
                   ></ReactPlayer>
                   <Banner>
-                    <Title>{popularData?.results[2].name}</Title>
+                    <Title>{popularData?.results[1].name}</Title>
                     <Overview>
                       <FaStar />
-                      {popularData?.results[2].vote_average}
+                      {popularData?.results[1].vote_average}
                     </Overview>
                   </Banner>
                 </Video>

@@ -1,12 +1,15 @@
 import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import ReactPlayer from "react-player";
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import {
   getMovieDetails,
   getMovieVedio2,
+  getTvDetails,
   getTvVedio2,
   IGetDetailMovies,
+  IGetDetailTvs,
   IGetVideosResult,
 } from "../../api";
 import { makeTrailerPath } from "../../utils";
@@ -26,7 +29,7 @@ const Video = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  //justify-content: center;
   align-items: center;
   overflow: hidden;
   z-index: 100;
@@ -34,7 +37,7 @@ const Video = styled.div`
 
 const Banner = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 500px;
   opacity: 0;
   position: absolute;
   background-position: center center;
@@ -64,7 +67,7 @@ const BigTitle = styled.div`
 const BigOverview = styled.p`
   color: ${(props) => props.theme.white.lighter};
   padding: 20px;
-  font-size: 20px;
+  font-size: 18px;
   position: relative;
   top: -80px;
 `;
@@ -74,51 +77,117 @@ interface IProps {
 }
 
 function SearchDetail({ id }: IProps) {
-  const { data: detailData, isLoading: detailDataLoding } =
+  const { data: movieDetailData, isLoading: movieDetailDataLoding } =
     useQuery<IGetDetailMovies>(["movie"], () => getMovieDetails(id));
+  const { data: tvDetailData, isLoading: tvDetailDataLoding } =
+    useQuery<IGetDetailTvs>(["movie"], () => getTvDetails(id));
   const { data: movieVideoData, isLoading: movieVideoDataLoding } =
     useQuery<IGetVideosResult>(["videos"], () => getMovieVedio2(id));
   const { data: tvVideoData, isLoading: tvVideoDataLoding } =
-    useQuery<IGetVideosResult>(["videos"], () => getTvVedio2(id));
-  const NETFLIX = "rGrxaNUPozA";
+    useQuery<IGetVideosResult>(["tv"], () => getTvVedio2(id));
+  const [netflix, setNetflix] = useState("rGrxaNUPozA");
+
   return (
     <AnimatePresence>
-      {detailDataLoding && movieVideoDataLoding && tvVideoDataLoding ? (
+      {movieDetailDataLoding &&
+      tvDetailDataLoding &&
+      movieVideoDataLoding &&
+      tvVideoDataLoding ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
           <Video>
-            <ReactPlayer
-              url={
-                movieVideoData?.results[0] !== undefined
-                  ? makeTrailerPath(movieVideoData?.results[0].key)
-                  : tvVideoData?.results[0] !== undefined
-                  ? makeTrailerPath(tvVideoData?.results[0].key)
-                  : makeTrailerPath(NETFLIX)
-              }
-              volume={0.3}
-              controls={false}
-              playing={true}
-              muted={false}
-              loop={true}
-              width="100%"
-              height="100%"
-              pip={false}
-              playsinline={false}
-            ></ReactPlayer>
+            {movieVideoData?.success === false &&
+            tvVideoData?.success === false ? (
+              <div>자료없음</div>
+            ) : tvVideoData?.success === false ? (
+              <ReactPlayer
+                url={
+                  movieVideoData?.results[0]
+                    ? makeTrailerPath(movieVideoData?.results[0].key)
+                    : makeTrailerPath(netflix)
+                }
+                volume={0.3}
+                controls={false}
+                playing={true}
+                muted={false}
+                loop={true}
+                width="100%"
+                height="500px"
+                pip={false}
+                playsinline={false}
+              ></ReactPlayer>
+            ) : tvVideoData?.results[0] === undefined ? (
+              <ReactPlayer
+                url={
+                  movieVideoData?.success === false
+                    ? makeTrailerPath(netflix)
+                    : movieVideoData?.results[0]
+                    ? makeTrailerPath(movieVideoData?.results[0].key)
+                    : makeTrailerPath(netflix)
+                }
+                volume={0.3}
+                controls={false}
+                playing={true}
+                muted={false}
+                loop={true}
+                width="100%"
+                height="500px"
+                pip={false}
+                playsinline={false}
+              ></ReactPlayer>
+            ) : null}
+            {movieVideoData?.success === false &&
+            tvVideoData?.success === false ? (
+              <div>자료없음</div>
+            ) : movieVideoData?.success === false ? (
+              <ReactPlayer
+                url={
+                  tvVideoData?.results[0]
+                    ? makeTrailerPath(tvVideoData?.results[0].key)
+                    : makeTrailerPath(netflix)
+                }
+                volume={0.3}
+                controls={false}
+                playing={true}
+                muted={false}
+                loop={true}
+                width="100%"
+                height="500px"
+                pip={false}
+                playsinline={false}
+              ></ReactPlayer>
+            ) : null}
             <Banner />
-            <div>
-              <BigTitle>
-                <span>{detailData.title}</span>
-                <span>{detailData.runtime}분</span>
-                <span>
-                  {detailData.genres.map((genre) => (
-                    <span key={genre.id}>{genre.name}</span>
-                  ))}
-                </span>
-              </BigTitle>
-              <BigOverview>{detailData.overview}</BigOverview>
-            </div>
+            {movieVideoData?.success === false &&
+            tvVideoData?.success === false ? null : (
+              <div>
+                <BigTitle>
+                  <span>
+                    {movieDetailData?.title}
+                    {tvDetailData?.name}
+                  </span>
+                  <span>{movieDetailData?.runtime}분</span>
+                  <span>
+                    {movieDetailData?.genres ? (
+                      movieDetailData?.genres.map((genre) => (
+                        <span key={genre.id}>{genre.name}</span>
+                      ))
+                    ) : tvDetailData?.genres ? (
+                      tvDetailData?.genres.map((genre) => (
+                        <span key={genre.id}>{genre.name}</span>
+                      ))
+                    ) : (
+                      <div>자료없음</div>
+                    )}
+                  </span>
+                </BigTitle>
+                <BigOverview>
+                  {movieDetailData?.overview}
+                  {tvDetailData?.overview}
+                </BigOverview>
+              </div>
+            )}
           </Video>
         </>
       )}

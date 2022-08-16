@@ -143,10 +143,12 @@ function Header() {
       }
     });
   }, [scrollY, navAnimation]);
-  const history = useNavigate();
+  const navigate = useNavigate();
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data: IForm) => {
-    history(`/search?keyword=${data.keyword}`);
+    navigate(`/search?keyword=${data.keyword}`);
+    //window.location.replace(`/search?keyword=${data.keyword}`);
+    window.location.reload();
   };
   return (
     <Nav variants={navVariants} initial={"top"} animate={navAnimation}>

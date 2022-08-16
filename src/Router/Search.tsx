@@ -1,8 +1,8 @@
 import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { useQuery } from "react-query";
-import { Navigate, useLocation, useMatch, useNavigate } from "react-router-dom";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ISearch, search } from "../api";
 import SearchDetail from "../Components/search/SearchDetail";
@@ -150,14 +150,14 @@ function Search() {
   const navigate = useNavigate();
   const { scrollY } = useScroll();
   const keyword = new URLSearchParams(location.search).get("keyword");
-  const searchMatch = useMatch(`/search/:searchId`);
-  const [clickKeyword, setClickKeyword] = useState(0);
+  const searchMatch = useMatch("/search/:searchId");
+  const [clickKeyword, setClickKeyword] = useState("");
   const { data, isLoading } = useQuery<ISearch>(["search"], () =>
     search(keyword)
   );
   const onBoxClicked = (searchId: number) => {
-    setClickKeyword(searchId);
     navigate(`/search/${searchId}`);
+    setClickKeyword(keyword);
   };
   const onOverlayClick = () => {
     navigate(`/search?keyword=${clickKeyword}`);
@@ -169,39 +169,41 @@ function Search() {
       ) : (
         <>
           <WhatSearch>검색결과</WhatSearch>
-          <SearchSlider>
-            {data.results.map((search) => (
-              <Box
-                layoutId={search.id + ""}
-                onClick={() => onBoxClicked(search.id)}
-                key={search.id}
-                variants={boxVarints}
-                whileHover="hover"
-                initial="normal"
-                transition={{
-                  type: "tween",
-                }}
-                bgphoto={
-                  search.backdrop_path
-                    ? makeImagePath(search.backdrop_path, "w400")
-                    : search.poster_path
-                    ? makeImagePath(search.poster_path, "w400")
-                    : "/assets/netflix.png"
-                }
-              >
-                <div>
-                  {search.name}
-                  {search.title}
-                </div>
-                <Info variants={infoVariants}>
+          <AnimatePresence>
+            <SearchSlider>
+              {data.results.map((search) => (
+                <Box
+                  layoutId={search.id + ""}
+                  onClick={() => onBoxClicked(search.id)}
+                  key={search.id}
+                  variants={boxVarints}
+                  whileHover="hover"
+                  initial="normal"
+                  transition={{
+                    type: "tween",
+                  }}
+                  bgphoto={
+                    search.backdrop_path
+                      ? makeImagePath(search.backdrop_path, "w400")
+                      : search.poster_path
+                      ? makeImagePath(search.poster_path, "w400")
+                      : "/assets/netflix.png"
+                  }
+                >
                   <div>
-                    <FaStar />
+                    {search.name}
+                    {search.title}
                   </div>
-                  <div>{search.vote_average}</div>
-                </Info>
-              </Box>
-            ))}
-          </SearchSlider>
+                  <Info variants={infoVariants}>
+                    <div>
+                      <FaStar />
+                    </div>
+                    <div>{search.vote_average}</div>
+                  </Info>
+                </Box>
+              ))}
+            </SearchSlider>
+          </AnimatePresence>
           <AnimatePresence>
             {searchMatch && (
               <>
@@ -219,7 +221,8 @@ function Search() {
                 >
                   {searchMatch ? (
                     <SearchDetail id={searchMatch.params.searchId} />
-                  ) : null}
+                  ) : //<div>hello</div>
+                  null}
                 </BigBox>
               </>
             )}

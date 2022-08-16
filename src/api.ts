@@ -47,6 +47,7 @@ export interface IGenres {
 export interface IGetVideosResult {
   id: number;
   results: IVideo[];
+  success: boolean;
 }
 
 export interface IVideo {

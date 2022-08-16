@@ -4,17 +4,13 @@ import styled from "styled-components";
 import {
   getMovies,
   getMovieVedio,
-  getTvs,
   IGetMoviesResult,
-  IGetTvResult,
   IGetVideosResult,
 } from "../api";
 import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import MovieSlider from "../Components/movie/MovieSlider";
-import { useEffect } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { IdState } from "../Recoil/atom";
+import { useState } from "react";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -75,13 +71,13 @@ const Overview = styled.p`
 `;
 
 function Home() {
+  const [netflix, setNetflix] = useState("rGrxaNUPozA");
   const { data: nowData, isLoading: nowDataLoding } =
     useQuery<IGetMoviesResult>(["movie", "now"], () =>
       getMovies("now_playing")
     );
   const { data: trailerData, isLoading: trailerDataLoding } =
     useQuery<IGetVideosResult>(["videos"], () => getMovieVedio("616037"));
-
   const { data: topMovieData, isLoading: topMovieDataLoding } =
     useQuery<IGetMoviesResult>(["movie", "top"], () => getMovies("top_rated"));
 
@@ -91,46 +87,46 @@ function Home() {
     );
   return (
     <Wrapper>
-      {trailerDataLoding &&
-      nowDataLoding &&
+      {nowDataLoding &&
+      trailerDataLoding &&
       topMovieDataLoding &&
       upcomingDataLoding ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
           <Trailer>
-            {nowDataLoding ? (
-              <Loader>Loading...</Loader>
-            ) : (
-              <>
-                <HelmetProvider>
-                  <Helmet>
-                    <title>MOVIE-NETFLIX</title>
-                  </Helmet>
-                </HelmetProvider>
-                <Video>
-                  <ReactPlayer
-                    url={makeTrailerPath(trailerData?.results[0].key || "")}
-                    volume={0.3}
-                    controls={false}
-                    playing={true}
-                    muted={false}
-                    loop={true}
-                    width="100%"
-                    height="calc(110vh)"
-                    pip={false}
-                    playsinline={false}
-                  ></ReactPlayer>
-                  <Banner>
-                    <Title>{nowData?.results[0].title}</Title>
-                    <Overview>{nowData?.results[0].overview}</Overview>
-                  </Banner>
-                </Video>
-                <MovieSlider kind="now" data={nowData} />
-                <MovieSlider kind="top" data={topMovieData} />
-                <MovieSlider kind="upcomming" data={upcomingData} />
-              </>
-            )}
+            <>
+              <HelmetProvider>
+                <Helmet>
+                  <title>MOVIE-NETFLIX</title>
+                </Helmet>
+              </HelmetProvider>
+              <Video>
+                <ReactPlayer
+                  url={
+                    trailerData?.results[0].key !== undefined
+                      ? makeTrailerPath(trailerData?.results[0].key)
+                      : makeTrailerPath(netflix)
+                  }
+                  volume={0.3}
+                  controls={false}
+                  playing={true}
+                  muted={false}
+                  loop={true}
+                  width="100%"
+                  height="calc(110vh)"
+                  pip={false}
+                  playsinline={false}
+                ></ReactPlayer>
+                <Banner>
+                  <Title>{nowData?.results[0].title}</Title>
+                  <Overview>{nowData?.results[0].overview}</Overview>
+                </Banner>
+              </Video>
+              <MovieSlider kind="now" data={nowData} />
+              <MovieSlider kind="top" data={topMovieData} />
+              <MovieSlider kind="upcomming" data={upcomingData} />
+            </>
           </Trailer>
         </>
       )}

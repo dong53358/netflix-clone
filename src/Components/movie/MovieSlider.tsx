@@ -1,10 +1,9 @@
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaAngleRight, FaStar } from "react-icons/fa";
-import { useQuery } from "react-query";
-import { Navigate, useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { getMovieDetails, IGetDetailMovies, IGetMoviesResult } from "../../api";
+import { IGetMoviesResult } from "../../api";
 import { makeImagePath } from "../../utils";
 import MovieDetail from "./MovieDetail";
 
@@ -202,11 +201,11 @@ function MovieSlider({ kind, data }: IProps) {
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
-
+  const { scrollY } = useScroll();
   const onBoxClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
   };
-  const { scrollY } = useScroll();
+
   const onOverlayClick = () => {
     navigate("/");
   };

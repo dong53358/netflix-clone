@@ -1,15 +1,9 @@
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaAngleRight, FaStar } from "react-icons/fa";
-import { useQuery } from "react-query";
-import { Navigate, useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import {
-  getMovieDetails,
-  IGetDetailMovies,
-  IGetMoviesResult,
-  IGetTvResult,
-} from "../../api";
+import { IGetTvResult } from "../../api";
 import { makeImagePath } from "../../utils";
 import TvDetail from "./TvDetail";
 

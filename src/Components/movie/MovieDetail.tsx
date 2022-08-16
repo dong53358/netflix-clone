@@ -1,15 +1,13 @@
 import styled from "styled-components";
-import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { useMatch, useNavigate } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import {
   getMovieDetails,
-  getMovieVedio,
   getMovieVedio2,
   IGetDetailMovies,
   IGetVideosResult,
 } from "../../api";
 import { useQuery } from "react-query";
-import { makeImagePath, makeTrailerPath } from "../../utils";
+import { makeTrailerPath } from "../../utils";
 import ReactPlayer from "react-player";
 import { useState } from "react";
 
@@ -28,7 +26,7 @@ const Video = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  //justify-content: center;
   align-items: center;
   overflow: hidden;
   z-index: 100;
@@ -86,7 +84,8 @@ function MovieDetail({ id, kind }: IProps) {
     useQuery<IGetVideosResult>(["videos", `${id}_videos`], () =>
       getMovieVedio2(id)
     );
-  const NETFLIX = "rGrxaNUPozA";
+  const [netflix, setNetflix] = useState("rGrxaNUPozA");
+
   return (
     <AnimatePresence>
       {detailDataLoding && trailerDataLoding ? (
@@ -97,7 +96,7 @@ function MovieDetail({ id, kind }: IProps) {
             <ReactPlayer
               url={
                 trailerData?.results[0] === undefined
-                  ? makeTrailerPath(NETFLIX)
+                  ? makeTrailerPath(netflix)
                   : makeTrailerPath(trailerData?.results[0].key || "")
               }
               volume={0.3}
@@ -106,7 +105,7 @@ function MovieDetail({ id, kind }: IProps) {
               muted={false}
               loop={true}
               width="100%"
-              height="100%"
+              height="500px"
               pip={false}
               playsinline={false}
             ></ReactPlayer>
