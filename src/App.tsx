@@ -8,12 +8,16 @@ function App() {
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="movies/:Id" element={<Home />}></Route>
-        <Route path="/tv" element={<Tv />}></Route>
-        <Route path="/tv/:Id" element={<Tv />}></Route>
-        <Route path="/search" element={<Search />}></Route>
-        <Route path="/search/:searchId" element={<Search />}></Route>
+        <Route path="/" element={<Home />}>
+          <Route path="movies/:Id" element={<Home />}></Route>
+        </Route>
+        <Route path="/tv" element={<Tv />}>
+          <Route path="/tv/:Id" element={<Tv />}></Route>
+        </Route>
+        <Route path="/search" element={<Search />}>
+          <Route path="/search/*" element={<Search />}></Route>
+          <Route path="/search/:searchId" element={<Search />}></Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

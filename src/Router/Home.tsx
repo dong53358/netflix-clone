@@ -95,7 +95,7 @@ function Home() {
       ) : (
         <>
           <Trailer>
-            {nowDataLoding ? (
+            {nowDataLoding && trailerData ? (
               <Loader>Loading...</Loader>
             ) : (
               <>
@@ -106,11 +106,7 @@ function Home() {
                 </HelmetProvider>
                 <Video>
                   <ReactPlayer
-                    url={
-                      trailerData?.results[0].key !== undefined
-                        ? makeTrailerPath(trailerData?.results[0].key)
-                        : makeTrailerPath(netflix)
-                    }
+                    url={makeTrailerPath(trailerData?.results[0].key || "")}
                     volume={0.3}
                     controls={false}
                     playing={true}

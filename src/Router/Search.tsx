@@ -171,7 +171,7 @@ function Search() {
           <WhatSearch>검색결과</WhatSearch>
           <AnimatePresence>
             <SearchSlider>
-              {data.results.map((search) => (
+              {data?.results.map((search) => (
                 <Box
                   layoutId={search.id + ""}
                   onClick={() => onBoxClicked(search.id)}

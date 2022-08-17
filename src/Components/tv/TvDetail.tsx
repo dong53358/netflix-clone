@@ -109,15 +109,15 @@ function TvDetail({ id, kind }: IProps) {
             <Banner />
             <div>
               <BigTitle>
-                <span>{detailData.name}</span>
+                <span>{detailData?.name}</span>
                 <span>
-                  {detailData.genres.map((genre) => (
-                    <span key={genre.id}>{genre.name}</span>
+                  {detailData?.genres.map((genre) => (
+                    <span key={genre?.id}>{genre.name}</span>
                   ))}
                 </span>
               </BigTitle>
               <BigOverview>
-                {detailData.overview ? detailData.overview : "등록되지 않음"}
+                {detailData?.overview ? detailData?.overview : "등록되지 않음"}
               </BigOverview>
             </div>
           </Video>

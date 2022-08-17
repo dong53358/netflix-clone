@@ -196,7 +196,7 @@ function MovieSlider({ kind, data }: IProps) {
     if (data) {
       if (leaving) return;
       toggleLeaving();
-      const totalMocies = data.results.length - 1;
+      const totalMocies = data?.results.length - 1;
       const maxIndex = Math.floor(totalMocies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }

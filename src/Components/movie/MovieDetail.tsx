@@ -112,15 +112,15 @@ function MovieDetail({ id, kind }: IProps) {
             <Banner />
             <div>
               <BigTitle>
-                <span>{detailData.title}</span>
-                <span>{detailData.runtime}분</span>
+                <span>{detailData?.title}</span>
+                <span>{detailData?.runtime}분</span>
                 <span>
-                  {detailData.genres.map((genre) => (
-                    <span key={genre.id}>{genre.name}</span>
+                  {detailData?.genres.map((genre) => (
+                    <span key={genre?.id}>{genre?.name}</span>
                   ))}
                 </span>
               </BigTitle>
-              <BigOverview>{detailData.overview}</BigOverview>
+              <BigOverview>{detailData?.overview}</BigOverview>
             </div>
           </Video>
         </>
