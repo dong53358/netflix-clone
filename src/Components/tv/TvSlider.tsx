@@ -230,7 +230,7 @@ function TvSlider({ kind, data }: IProps) {
               .slice(offset * index, offset * index + offset)
               .map((tv) => (
                 <Box
-                  //layoutId={tv.id + ""}
+                  layoutId={tv.id + kind}
                   onClick={() => onBoxClicked(tv.id)}
                   key={tv.id}
                   variants={boxVarints}
@@ -242,7 +242,7 @@ function TvSlider({ kind, data }: IProps) {
                   bgphoto={
                     tv.backdrop_path
                       ? makeImagePath(tv.backdrop_path, "w400")
-                      : "/assets/netflix.png"
+                      : "assets/netflix.png"
                   }
                 >
                   <div>{tv.name}</div>
@@ -267,7 +267,7 @@ function TvSlider({ kind, data }: IProps) {
               exit={{ opacity: 0 }}
             />
             <BigBox
-              //layoutId={bigTvMatch?.params.tvId}
+              layoutId={bigTvMatch?.params.tvId + kind}
               style={{
                 top: scrollY.get() + 50,
               }}

@@ -3,8 +3,8 @@ import { recoilPersist } from "recoil-persist";
 
 const { persistAtom } = recoilPersist();
 
-export const IdState = atom<string>({
-  key: "localMovieId",
-  default: "",
+export const muteState = atom<boolean>({
+  key: "mute",
+  default: true,
   effects_UNSTABLE: [persistAtom],
 });

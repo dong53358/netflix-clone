@@ -207,7 +207,7 @@ function MovieSlider({ kind, data }: IProps) {
   };
 
   const onOverlayClick = () => {
-    navigate("/");
+    navigate("/movies");
   };
   return (
     <>
@@ -242,7 +242,7 @@ function MovieSlider({ kind, data }: IProps) {
                   bgphoto={
                     movie.backdrop_path
                       ? makeImagePath(movie.backdrop_path, "w400")
-                      : "/assets/netflix.png"
+                      : "assets/netflix.png"
                   }
                 >
                   <div>{movie.title}</div>

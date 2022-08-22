@@ -10,6 +10,9 @@ import { useQuery } from "react-query";
 import { makeTrailerPath } from "../../utils";
 import ReactPlayer from "react-player";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { muteState } from "../../Recoil/atom";
+import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
 const Loader = styled.div`
   height: 50vh;
@@ -45,7 +48,7 @@ const BigTitle = styled.div`
   align-items: center;
   color: ${(props) => props.theme.white.lighter};
   padding: 20px;
-  font-size: 36px;
+  font-size: 34px;
   position: relative;
   top: -80px;
   font-weight: 600;
@@ -53,8 +56,26 @@ const BigTitle = styled.div`
     margin-right: 30px;
   }
   span:last-child {
-    font-size: 17px;
+    font-size: 15px;
     color: red;
+  }
+`;
+
+const MuteBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  font-size: 20px;
+  border: solid 2px white;
+  margin-right: 20px;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  &:active {
+    background-color: rgba(255, 255, 255, 0.8);
   }
 `;
 
@@ -82,7 +103,10 @@ function TvDetail({ id, kind }: IProps) {
       getTvVedio2(id)
     );
   const [netflix, setNetflix] = useState("rGrxaNUPozA");
-
+  const [isMute, setIsMute] = useRecoilState(muteState);
+  const muteBtn = () => {
+    setIsMute((prev) => !prev);
+  };
   return (
     <AnimatePresence>
       {detailDataLoding && trailerDataLoding ? (
@@ -96,7 +120,7 @@ function TvDetail({ id, kind }: IProps) {
                   ? makeTrailerPath(netflix)
                   : makeTrailerPath(trailerData?.results[0].key || "")
               }
-              volume={0.3}
+              volume={isMute ? 0 : 0.3}
               controls={false}
               playing={true}
               muted={false}
@@ -110,6 +134,9 @@ function TvDetail({ id, kind }: IProps) {
             <div>
               <BigTitle>
                 <span>{detailData?.name}</span>
+                <MuteBtn onClick={muteBtn}>
+                  {isMute ? <FaVolumeMute /> : <FaVolumeUp />}
+                </MuteBtn>
                 <span>
                   {detailData?.genres.map((genre) => (
                     <span key={genre?.id}>{genre.name}</span>

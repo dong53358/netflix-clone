@@ -10,6 +10,9 @@ import { useQuery } from "react-query";
 import { makeTrailerPath } from "../../utils";
 import ReactPlayer from "react-player";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { muteState } from "../../Recoil/atom";
+import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
 const Loader = styled.div`
   height: 50vh;
@@ -61,6 +64,24 @@ const BigTitle = styled.div`
   }
 `;
 
+const MuteBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  font-size: 22px;
+  border: solid 2px white;
+  margin-right: 20px;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  &:active {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+`;
+
 const BigOverview = styled.p`
   color: ${(props) => props.theme.white.lighter};
   padding: 20px;
@@ -86,6 +107,10 @@ function MovieDetail({ id, kind }: IProps) {
     );
   const [netflix, setNetflix] = useState("rGrxaNUPozA");
 
+  const [isMute, setIsMute] = useRecoilState(muteState);
+  const muteBtn = () => {
+    setIsMute((prev) => !prev);
+  };
   return (
     <AnimatePresence>
       {detailDataLoding && trailerDataLoding ? (
@@ -99,7 +124,7 @@ function MovieDetail({ id, kind }: IProps) {
                   ? makeTrailerPath(netflix)
                   : makeTrailerPath(trailerData?.results[0].key || "")
               }
-              volume={0.3}
+              volume={isMute ? 0 : 0.3}
               controls={false}
               playing={true}
               muted={false}
@@ -113,6 +138,9 @@ function MovieDetail({ id, kind }: IProps) {
             <div>
               <BigTitle>
                 <span>{detailData?.title}</span>
+                <MuteBtn onClick={muteBtn}>
+                  {isMute ? <FaVolumeMute /> : <FaVolumeUp />}
+                </MuteBtn>
                 <span>{detailData?.runtime}분</span>
                 <span>
                   {detailData?.genres.map((genre) => (

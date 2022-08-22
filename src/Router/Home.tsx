@@ -10,7 +10,9 @@ import {
 import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import MovieSlider from "../Components/movie/MovieSlider";
-import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { muteState } from "../Recoil/atom";
+import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -58,9 +60,29 @@ const Banner = styled.div`
 `;
 
 const Title = styled.h2`
+  display: flex;
+  align-items: center;
   font-size: 68px;
   font-weight: 600;
   margin-bottom: 10px;
+`;
+
+const MuteBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  font-size: 35px;
+  margin-left: 10px;
+  border: solid 2px white;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  &:active {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
 `;
 
 const Overview = styled.p`
@@ -71,7 +93,6 @@ const Overview = styled.p`
 `;
 
 function Home() {
-  const [netflix, setNetflix] = useState("rGrxaNUPozA");
   const { data: nowData, isLoading: nowDataLoding } =
     useQuery<IGetMoviesResult>(["movie", "now"], () =>
       getMovies("now_playing")
@@ -85,6 +106,10 @@ function Home() {
     useQuery<IGetMoviesResult>(["movie", "upcoming"], () =>
       getMovies("upcoming")
     );
+  const [isMute, setIsMute] = useRecoilState(muteState);
+  const muteBtn = () => {
+    setIsMute((prev) => !prev);
+  };
   return (
     <Wrapper>
       {nowDataLoding &&
@@ -95,7 +120,7 @@ function Home() {
       ) : (
         <>
           <Trailer>
-            {nowDataLoding && trailerData ? (
+            {nowDataLoding ? (
               <Loader>Loading...</Loader>
             ) : (
               <>
@@ -107,7 +132,7 @@ function Home() {
                 <Video>
                   <ReactPlayer
                     url={makeTrailerPath(trailerData?.results[0].key || "")}
-                    volume={0.3}
+                    volume={isMute ? 0 : 0.3}
                     controls={false}
                     playing={true}
                     muted={false}
@@ -118,7 +143,12 @@ function Home() {
                     playsinline={false}
                   ></ReactPlayer>
                   <Banner>
-                    <Title>{nowData?.results[0].title}</Title>
+                    <Title>
+                      {nowData?.results[0].title}
+                      <MuteBtn onClick={muteBtn}>
+                        {isMute ? <FaVolumeMute /> : <FaVolumeUp />}
+                      </MuteBtn>
+                    </Title>
                     <Overview>{nowData?.results[0].overview}</Overview>
                   </Banner>
                 </Video>

@@ -4,8 +4,10 @@ import styled from "styled-components";
 import { getTvs, getTvVedio, IGetTvResult, IGetVideosResult } from "../api";
 import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import TvSlider from "../Components/tv/TvSlider";
+import { useRecoilState } from "recoil";
+import { muteState } from "../Recoil/atom";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -58,6 +60,24 @@ const Title = styled.div`
   margin-right: 30px;
 `;
 
+const MuteBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  font-size: 35px;
+  margin-left: 10px;
+  border: solid 2px white;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  &:active {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+`;
+
 const Overview = styled.div`
   display: flex;
   align-items: center;
@@ -84,6 +104,10 @@ function Tv() {
   const { data: topTvData, isLoading: topTvDataLoding } =
     useQuery<IGetTvResult>(["tv", "top_rated"], () => getTvs("top_rated"));
 
+  const [isMute, setIsMute] = useRecoilState(muteState);
+  const muteBtn = () => {
+    setIsMute((prev) => !prev);
+  };
   return (
     <Wrapper>
       {nowDataLoding && topTvDataLoding && popularDataLoding ? (
@@ -103,7 +127,7 @@ function Tv() {
                 <Video>
                   <ReactPlayer
                     url={makeTrailerPath(tvTrailerData?.results[0].key || "")}
-                    volume={0.3}
+                    volume={isMute ? 0 : 0.3}
                     controls={false}
                     playing={true}
                     muted={false}
@@ -115,6 +139,9 @@ function Tv() {
                   ></ReactPlayer>
                   <Banner>
                     <Title>{popularData?.results[1].name}</Title>
+                    <MuteBtn onClick={muteBtn}>
+                      {isMute ? <FaVolumeMute /> : <FaVolumeUp />}
+                    </MuteBtn>
                     <Overview>
                       <FaStar />
                       {popularData?.results[1].vote_average}

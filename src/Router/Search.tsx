@@ -187,7 +187,7 @@ function Search() {
                       ? makeImagePath(search.backdrop_path, "w400")
                       : search.poster_path
                       ? makeImagePath(search.poster_path, "w400")
-                      : "/assets/netflix.png"
+                      : "assets/netflix.png"
                   }
                 >
                   <div>

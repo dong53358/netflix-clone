@@ -3,13 +3,15 @@ import Home from "./Router/Home";
 import Tv from "./Router/Tv";
 import Search from "./Router/Search";
 import Header from "./Components/Header";
+import Main from "./Router/Main";
 function App() {
   return (
     <HashRouter /*basename={process.env.PUBLIC_URL}*/>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />}>
-          <Route path="movies/:Id" element={<Home />}></Route>
+        <Route path="/" element={<Main />}></Route>
+        <Route path="/movies" element={<Home />}>
+          <Route path="/movies/:Id" element={<Home />}></Route>
         </Route>
         <Route path="/tv" element={<Tv />}>
           <Route path="/tv/:Id" element={<Tv />}></Route>
