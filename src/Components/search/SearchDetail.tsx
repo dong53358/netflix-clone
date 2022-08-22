@@ -150,7 +150,7 @@ function SearchDetail({ id }: IProps) {
                     ? makeTrailerPath(movieVideoData?.results[0].key)
                     : makeTrailerPath(netflix)
                 }
-                volume={0.3}
+                volume={isMute ? 0 : 0.3}
                 controls={false}
                 playing={true}
                 muted={false}
@@ -171,7 +171,7 @@ function SearchDetail({ id }: IProps) {
                     ? makeTrailerPath(tvVideoData?.results[0].key)
                     : makeTrailerPath(netflix)
                 }
-                volume={0.3}
+                volume={isMute ? 0 : 0.3}
                 controls={false}
                 playing={true}
                 muted={false}
