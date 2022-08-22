@@ -1,7 +1,9 @@
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import ReactPlayer from "react-player";
 import { useQuery } from "react-query";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import {
   getMovieDetails,
@@ -12,6 +14,7 @@ import {
   IGetDetailTvs,
   IGetVideosResult,
 } from "../../api";
+import { muteState } from "../../Recoil/atom";
 import { makeTrailerPath } from "../../utils";
 
 const Loader = styled.div`
@@ -48,19 +51,37 @@ const BigTitle = styled.div`
   align-items: center;
   color: ${(props) => props.theme.white.lighter};
   padding: 20px;
-  font-size: 36px;
+  font-size: 33px;
   position: relative;
   top: -80px;
   font-weight: 600;
   span:first-child {
-    margin-right: 30px;
+    margin-right: 20px;
   }
-  span:nth-child(2) {
-    margin-right: 30px;
+  span:nth-child(3) {
+    margin-right: 20px;
   }
   span:last-child {
-    font-size: 17px;
+    font-size: 14px;
     color: red;
+  }
+`;
+
+const MuteBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  font-size: 19px;
+  border: solid 2px white;
+  margin-right: 10px;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  &:active {
+    background-color: rgba(255, 255, 255, 0.8);
   }
 `;
 
@@ -86,7 +107,10 @@ function SearchDetail({ id }: IProps) {
   const { data: tvVideoData, isLoading: tvVideoDataLoding } =
     useQuery<IGetVideosResult>(["tv"], () => getTvVedio2(id));
   const [netflix, setNetflix] = useState("rGrxaNUPozA");
-
+  const [isMute, setIsMute] = useRecoilState(muteState);
+  const muteBtn = () => {
+    setIsMute((prev) => !prev);
+  };
   return (
     <AnimatePresence>
       {movieDetailDataLoding &&
@@ -107,7 +131,7 @@ function SearchDetail({ id }: IProps) {
                     ? makeTrailerPath(movieVideoData?.results[0].key)
                     : makeTrailerPath(netflix)
                 }
-                volume={0.3}
+                volume={isMute ? 0 : 0.3}
                 controls={false}
                 playing={true}
                 muted={false}
@@ -167,6 +191,9 @@ function SearchDetail({ id }: IProps) {
                     {movieDetailData?.title}
                     {tvDetailData?.name}
                   </span>
+                  <MuteBtn onClick={muteBtn}>
+                    {isMute ? <FaVolumeMute /> : <FaVolumeUp />}
+                  </MuteBtn>
                   <span>{movieDetailData?.runtime}분</span>
                   <span>
                     {movieDetailData?.genres ? (
