@@ -41,6 +41,7 @@ const Items = styled.ul`
 
 const Item = styled.li`
   margin-right: 20px;
+  margin-bottom: 10px;
   color: ${(props) => props.theme.white.darker};
   transition: color 0.3s ease-in-out;
   position: relative;

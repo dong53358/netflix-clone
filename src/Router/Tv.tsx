@@ -48,15 +48,16 @@ const Banner = styled.div`
   display: flex;
   align-items: flex-end;
   color: white;
-  padding-bottom: 150px;
+  padding-bottom: 110px;
   padding-left: 60px;
   text-shadow: 4px 4px 4px gray;
 `;
 
 const Title = styled.div`
+  display: flex;
+  align-items: center;
   font-size: 68px;
   font-weight: 600;
-  margin-bottom: 10px;
   margin-right: 30px;
 `;
 
@@ -68,7 +69,8 @@ const MuteBtn = styled.div`
   height: 60px;
   width: 60px;
   font-size: 35px;
-  margin-left: 10px;
+  margin-left: 25px;
+  margin-top: 15px;
   border: solid 2px white;
   &:hover {
     background-color: rgba(255, 255, 255, 0.3);
@@ -83,9 +85,8 @@ const Overview = styled.div`
   align-items: center;
   font-size: 40px;
   font-weight: 600;
-  width: 50%;
-  margin-bottom: 30px;
   color: red;
+  margin-bottom: 10px;
 `;
 
 function Tv() {
@@ -138,10 +139,12 @@ function Tv() {
                     playsinline={false}
                   ></ReactPlayer>
                   <Banner>
-                    <Title>{popularData?.results[1].name}</Title>
-                    <MuteBtn onClick={muteBtn}>
-                      {isMute ? <FaVolumeMute /> : <FaVolumeUp />}
-                    </MuteBtn>
+                    <Title>
+                      {popularData?.results[1].name}
+                      <MuteBtn onClick={muteBtn}>
+                        {isMute ? <FaVolumeMute /> : <FaVolumeUp />}
+                      </MuteBtn>
+                    </Title>
                     <Overview>
                       <FaStar />
                       {popularData?.results[1].vote_average}
