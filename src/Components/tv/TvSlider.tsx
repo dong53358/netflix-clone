@@ -2,8 +2,10 @@ import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaAngleRight, FaStar } from "react-icons/fa";
 import { useMatch, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { IGetTvResult } from "../../api";
+import { mainMuteState } from "../../Recoil/atom";
 import { makeImagePath } from "../../utils";
 import TvDetail from "./TvDetail";
 
@@ -201,9 +203,10 @@ function TvSlider({ kind, data }: IProps) {
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
-
+  const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
   const onBoxClicked = (tvId: number) => {
     navigate(`/tv/${tvId}`);
+    setIsMainMute(true);
   };
   const { scrollY } = useScroll();
   const onOverlayClick = () => {

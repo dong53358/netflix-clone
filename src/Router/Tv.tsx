@@ -6,8 +6,8 @@ import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { FaStar, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import TvSlider from "../Components/tv/TvSlider";
-import { useRecoilState } from "recoil";
-import { muteState } from "../Recoil/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { mainMuteState, muteState, tvMainState } from "../Recoil/atom";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -92,9 +92,9 @@ const Overview = styled.div`
 function Tv() {
   const { data: popularData, isLoading: popularDataLoding } =
     useQuery<IGetTvResult>(["tv", "popular"], () => getTvs("popular"));
-
+  const tvMainId = useRecoilValue(tvMainState);
   const { data: tvTrailerData } = useQuery<IGetVideosResult>(["tv"], () =>
-    getTvVedio("66732")
+    getTvVedio(tvMainId)
   );
 
   const { data: nowData, isLoading: nowDataLoding } = useQuery<IGetTvResult>(
@@ -105,9 +105,10 @@ function Tv() {
   const { data: topTvData, isLoading: topTvDataLoding } =
     useQuery<IGetTvResult>(["tv", "top_rated"], () => getTvs("top_rated"));
 
-  const [isMute, setIsMute] = useRecoilState(muteState);
-  const muteBtn = () => {
-    setIsMute((prev) => !prev);
+  const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
+
+  const mainMuteBtn = () => {
+    setIsMainMute((prev) => !prev);
   };
   return (
     <Wrapper>
@@ -128,7 +129,7 @@ function Tv() {
                 <Video>
                   <ReactPlayer
                     url={makeTrailerPath(tvTrailerData?.results[0].key || "")}
-                    volume={isMute ? 0 : 0.3}
+                    volume={isMainMute ? 0 : 0.3}
                     controls={false}
                     playing={true}
                     muted={false}
@@ -141,8 +142,8 @@ function Tv() {
                   <Banner>
                     <Title>
                       {popularData?.results[1].name}
-                      <MuteBtn onClick={muteBtn}>
-                        {isMute ? <FaVolumeMute /> : <FaVolumeUp />}
+                      <MuteBtn onClick={mainMuteBtn}>
+                        {isMainMute ? <FaVolumeMute /> : <FaVolumeUp />}
                       </MuteBtn>
                     </Title>
                     <Overview>

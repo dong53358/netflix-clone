@@ -1,6 +1,11 @@
+import { useEffect } from "react";
 import { FaAngleRight } from "react-icons/fa";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { getMovies, getTvs, IGetMoviesResult, IGetTvResult } from "../api";
+import { movieMainState, tvMainState } from "../Recoil/atom";
 
 const Wrapper = styled.div`
   display: flex;
@@ -73,6 +78,19 @@ const FooterInfo = styled.div`
 `;
 
 function Main() {
+  const { data: nowData, isLoading: nowDataLoding } =
+    useQuery<IGetMoviesResult>(["movie", "now"], () =>
+      getMovies("now_playing")
+    );
+  const { data: popularData, isLoading: popularDataLoding } =
+    useQuery<IGetTvResult>(["tv", "popular"], () => getTvs("popular"));
+  const [movieMainId, setMovieMainId] = useRecoilState(movieMainState);
+  const [tvMainId, setTvMainId] = useRecoilState(tvMainState);
+  useEffect(() => {
+    setMovieMainId(String(nowData?.results[0].id));
+    setTvMainId(String(popularData?.results[1].id));
+  }, [nowData, popularData]);
+
   return (
     <>
       <Wrapper>

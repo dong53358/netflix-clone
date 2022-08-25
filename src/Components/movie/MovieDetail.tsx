@@ -11,7 +11,7 @@ import { makeTrailerPath } from "../../utils";
 import ReactPlayer from "react-player";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { muteState } from "../../Recoil/atom";
+import { mainMuteState, muteState } from "../../Recoil/atom";
 import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
 const Loader = styled.div`
@@ -106,8 +106,8 @@ function MovieDetail({ id, kind }: IProps) {
       getMovieVedio2(id)
     );
   const [netflix, setNetflix] = useState("rGrxaNUPozA");
-
   const [isMute, setIsMute] = useRecoilState(muteState);
+
   const muteBtn = () => {
     setIsMute((prev) => !prev);
   };

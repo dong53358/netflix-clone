@@ -2,8 +2,10 @@ import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaAngleRight, FaStar } from "react-icons/fa";
 import { useMatch, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { IGetMoviesResult } from "../../api";
+import { mainMuteState } from "../../Recoil/atom";
 import { makeImagePath } from "../../utils";
 import MovieDetail from "./MovieDetail";
 
@@ -201,11 +203,12 @@ function MovieSlider({ kind, data }: IProps) {
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
+  const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
   const { scrollY } = useScroll();
   const onBoxClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
+    setIsMainMute(true);
   };
-
   const onOverlayClick = () => {
     navigate("/movies");
   };
