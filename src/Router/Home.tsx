@@ -11,8 +11,11 @@ import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import MovieSlider from "../Components/movie/MovieSlider";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { mainMuteState, movieMainState, muteState } from "../Recoil/atom";
-import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import { mainMuteState, movieMainState } from "../Recoil/atom";
+import { FaInfoCircle, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import { useMatch, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion, useScroll } from "framer-motion";
+import MovieDetail from "../Components/movie/MovieDetail";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -77,6 +80,7 @@ const MuteBtn = styled.div`
   font-size: 35px;
   margin-left: 20px;
   border: solid 2px white;
+  cursor: pointer;
   &:hover {
     background-color: rgba(255, 255, 255, 0.3);
   }
@@ -92,6 +96,55 @@ const Overview = styled.p`
   margin-bottom: 10px;
 `;
 
+const Info = styled.div`
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 200px;
+    background-color: rgba(91, 91, 90, 0.8);
+    border-radius: 4px;
+    border: none;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    &:hover {
+      background-color: rgba(91, 91, 90, 0.3);
+    }
+    &:active {
+      opacity: 0.8;
+      border: 1px solid white;
+    }
+    span {
+      margin-left: 10px;
+      font-size: 23px;
+    }
+  }
+`;
+
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+`;
+
+const BigBox = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 48vw;
+  height: 100vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: ${(props) => props.theme.black.lighter};
+  border-radius: 20px;
+  //overflow: hidden;
+`;
 function Home() {
   const { data: nowData, isLoading: nowDataLoding } =
     useQuery<IGetMoviesResult>(["movie", "now"], () =>
@@ -106,9 +159,19 @@ function Home() {
     useQuery<IGetMoviesResult>(["movie", "upcoming"], () =>
       getMovies("upcoming")
     );
+  const bigMovieMatch = useMatch("/movies/:movieId");
+  const { scrollY } = useScroll();
   const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
+  const navigate = useNavigate();
+  const onInfoClicked = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
+    setIsMainMute(true);
+  };
   const mainMuteBtn = () => {
     setIsMainMute((prev) => !prev);
+  };
+  const onOverlayClick = () => {
+    navigate("/movies");
   };
   return (
     <Wrapper>
@@ -137,8 +200,8 @@ function Home() {
                     playing={true}
                     muted={false}
                     loop={true}
-                    width="100%"
-                    height="calc(110vh)"
+                    width="calc(120vw)"
+                    height="calc(120vh)"
                     pip={false}
                     playsinline={false}
                   ></ReactPlayer>
@@ -150,8 +213,42 @@ function Home() {
                       </MuteBtn>
                     </Title>
                     <Overview>{nowData?.results[0].overview}</Overview>
+                    <Info>
+                      <button
+                        onClick={() => onInfoClicked(nowData?.results[0].id)}
+                        type="button"
+                      >
+                        <FaInfoCircle />
+                        <span>상세 정보</span>
+                      </button>
+                    </Info>
                   </Banner>
                 </Video>
+                <AnimatePresence>
+                  {bigMovieMatch && (
+                    <>
+                      <Overlay
+                        onClick={onOverlayClick}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      />
+                      <BigBox
+                        layoutId={bigMovieMatch?.params.movieId}
+                        style={{
+                          top: scrollY.get() + 50,
+                        }}
+                      >
+                        {bigMovieMatch ? (
+                          <MovieDetail
+                            id={bigMovieMatch.params.movieId}
+                            kind="now"
+                          />
+                        ) : null}
+                      </BigBox>
+                    </>
+                  )}
+                </AnimatePresence>
                 <MovieSlider kind="now" data={nowData} />
                 <MovieSlider kind="top" data={topMovieData} />
                 <MovieSlider kind="upcomming" data={upcomingData} />

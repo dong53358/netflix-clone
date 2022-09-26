@@ -61,6 +61,9 @@ table {
 }
 * {
   box-sizing: border-box;
+  button{
+    cursor: pointer;
+  }
 }
 body {
   font-weight: 300;

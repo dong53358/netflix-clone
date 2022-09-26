@@ -71,6 +71,7 @@ const MuteBtn = styled.div`
   font-size: 20px;
   border: solid 2px white;
   margin-right: 20px;
+  cursor: pointer;
   &:hover {
     background-color: rgba(255, 255, 255, 0.3);
   }

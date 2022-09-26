@@ -53,6 +53,7 @@ const BigTitle = styled.div`
   top: -80px;
   font-weight: 600;
   span:first-child {
+    margin-left: 30px;
     margin-right: 30px;
   }
   span:nth-child(2) {
@@ -74,6 +75,7 @@ const MuteBtn = styled.div`
   font-size: 22px;
   border: solid 2px white;
   margin-right: 20px;
+  cursor: pointer;
   &:hover {
     background-color: rgba(255, 255, 255, 0.3);
   }
