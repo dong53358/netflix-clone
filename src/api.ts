@@ -30,6 +30,7 @@ export interface IGetDetailMovies {
   title: string;
   overview: string;
   runtime: number;
+  release_date: string;
 }
 export interface IGetDetailTvs {
   backdrop_path: string;
@@ -90,6 +91,19 @@ export interface ISearchData {
   vote_average: number;
 }
 
+export interface ICast {
+  id: number;
+  cast: ICastIn[];
+}
+
+export interface ICastIn {
+  id: number;
+  name: string;
+  profile_path: string;
+  character: string;
+  credit_id: string;
+}
+
 export function getMovies(kind: string) {
   return fetch(
     `${BASE_PATH}movie/${kind}?api_key=${API_KEY}&language=ko&page=1&region=kr`
@@ -142,5 +156,11 @@ export function getTvVedio2(tvId: string) {
 export function search(query: string) {
   return fetch(
     `${BASE_PATH}search/multi?api_key=${API_KEY}&query=${query}`
+  ).then((response) => response.json());
+}
+
+export function cast(movieId: string) {
+  return fetch(
+    `${BASE_PATH}movie/${movieId}/credits?api_key=${API_KEY}&language=ko`
   ).then((response) => response.json());
 }

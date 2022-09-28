@@ -1,13 +1,12 @@
-import { AnimatePresence, motion, useScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaAngleRight, FaStar } from "react-icons/fa";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { IGetMoviesResult } from "../../api";
-import { mainMuteState } from "../../Recoil/atom";
+import { mainMuteState, scrollState } from "../../Recoil/atom";
 import { makeImagePath } from "../../utils";
-import MovieDetail from "./MovieDetail";
 
 const Slider = styled.div`
   position: relative;
@@ -102,29 +101,6 @@ const Info = styled(motion.div)`
   }
 `;
 
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-
-const BigBox = styled(motion.div)`
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  width: 48vw;
-  height: 100vh;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  background-color: ${(props) => props.theme.black.lighter};
-  border-radius: 20px;
-  //overflow: hidden;
-`;
-
 const rowVariants = {
   hidden: {
     x: window.outerWidth - 75,
@@ -168,9 +144,10 @@ const offset = 6;
 interface IProps {
   kind: string;
   data?: IGetMoviesResult;
+  onBoxClicked: Function;
 }
 
-function MovieSlider({ kind, data }: IProps) {
+function MovieSlider({ kind, data, onBoxClicked }: IProps) {
   const [titmeName, setTitleName] = useState("");
 
   useEffect(() => {
@@ -188,9 +165,9 @@ function MovieSlider({ kind, data }: IProps) {
   }, [kind]);
 
   const navigate = useNavigate();
-  const bigMovieMatch = useMatch("/movies/:movieId");
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const [scrollFixed, setScrollFixed] = useRecoilState(scrollState);
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
   };
@@ -204,14 +181,12 @@ function MovieSlider({ kind, data }: IProps) {
     }
   };
   const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
-  const { scrollY } = useScroll();
-  const onBoxClicked = (movieId: number) => {
-    navigate(`/movies/${movieId}`);
-    setIsMainMute(true);
-  };
-  const onOverlayClick = () => {
-    navigate("/movies");
-  };
+  // const onBoxClicked = (movieId: number) => {
+  //   navigate(`/movies/${movieId}`);
+  //   setIsMainMute(true);
+  //   setScrollFixed(true);
+  //   //document.body.style.overflow = "hidden";
+  // };
   return (
     <>
       <Slider>
@@ -260,28 +235,6 @@ function MovieSlider({ kind, data }: IProps) {
           </Row>
         </AnimatePresence>
       </Slider>
-      <AnimatePresence>
-        {bigMovieMatch && (
-          <>
-            <Overlay
-              onClick={onOverlayClick}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <BigBox
-              layoutId={bigMovieMatch?.params.movieId}
-              style={{
-                top: scrollY.get() + 50,
-              }}
-            >
-              {bigMovieMatch ? (
-                <MovieDetail id={bigMovieMatch.params.movieId} kind={kind} />
-              ) : null}
-            </BigBox>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }

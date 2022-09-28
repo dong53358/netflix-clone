@@ -11,16 +11,22 @@ import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import MovieSlider from "../Components/movie/MovieSlider";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { mainMuteState, movieMainState } from "../Recoil/atom";
-import { FaInfoCircle, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import { mainMuteState, movieMainState, scrollState } from "../Recoil/atom";
+import {
+  FaInfoCircle,
+  FaVolumeMute,
+  FaVolumeUp,
+  FaWindowClose,
+} from "react-icons/fa";
 import { useMatch, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import MovieDetail from "../Components/movie/MovieDetail";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ scroll: boolean }>`
   background-color: black;
   height: 200vh;
   width: 100vw;
+  overflow: ${(props) => (props.scroll ? "hidden" : "visible")};
 `;
 
 const Trailer = styled.div`
@@ -79,7 +85,6 @@ const MuteBtn = styled.div`
   width: 60px;
   font-size: 35px;
   margin-left: 20px;
-  border: solid 2px white;
   cursor: pointer;
   &:hover {
     background-color: rgba(255, 255, 255, 0.3);
@@ -127,8 +132,8 @@ const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
   opacity: 0;
 `;
 
@@ -143,8 +148,22 @@ const BigBox = styled(motion.div)`
   margin: 0 auto;
   background-color: ${(props) => props.theme.black.lighter};
   border-radius: 20px;
-  //overflow: hidden;
+  z-index: 9999;
 `;
+
+const ModalCloseBtn = styled.div`
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 30px;
+  &:hover {
+    opacity: 0.7;
+  }
+  &:active {
+    opacity: 1;
+  }
+`;
+
 function Home() {
   const { data: nowData, isLoading: nowDataLoding } =
     useQuery<IGetMoviesResult>(["movie", "now"], () =>
@@ -159,22 +178,36 @@ function Home() {
     useQuery<IGetMoviesResult>(["movie", "upcoming"], () =>
       getMovies("upcoming")
     );
-  const bigMovieMatch = useMatch("/movies/:movieId");
-  const { scrollY } = useScroll();
   const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
+  const bigMovieMatch = useMatch("/movies/:movieId");
   const navigate = useNavigate();
+  const [scrollFixed, setScrollFixed] = useRecoilState(scrollState);
   const onInfoClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
     setIsMainMute(true);
+    setScrollFixed(true);
+    //document.body.style.overflow = "hidden";
   };
   const mainMuteBtn = () => {
     setIsMainMute((prev) => !prev);
   };
+
   const onOverlayClick = () => {
     navigate("/movies");
+    setScrollFixed(false);
+    //document.body.style.overflow = "unset";
+  };
+
+  const { scrollY } = useScroll();
+  //const setScrollY = useTransform(scrollY, (value) => value + 30);
+  const onBoxClicked = (movieId: number) => {
+    navigate(`/movies/${movieId}`);
+    setIsMainMute(true);
+    setScrollFixed(true);
+    //document.body.style.overflow = "hidden";
   };
   return (
-    <Wrapper>
+    <Wrapper scroll={scrollFixed}>
       {nowDataLoding &&
       trailerDataLoding &&
       topMovieDataLoding &&
@@ -224,6 +257,21 @@ function Home() {
                     </Info>
                   </Banner>
                 </Video>
+                <MovieSlider
+                  kind="now"
+                  data={nowData}
+                  onBoxClicked={onBoxClicked}
+                />
+                <MovieSlider
+                  kind="top"
+                  data={topMovieData}
+                  onBoxClicked={onBoxClicked}
+                />
+                <MovieSlider
+                  kind="upcomming"
+                  data={upcomingData}
+                  onBoxClicked={onBoxClicked}
+                />
                 <AnimatePresence>
                   {bigMovieMatch && (
                     <>
@@ -236,22 +284,22 @@ function Home() {
                       <BigBox
                         layoutId={bigMovieMatch?.params.movieId}
                         style={{
-                          top: scrollY.get() + 50,
+                          top: scrollY.get() + 30,
                         }}
                       >
                         {bigMovieMatch ? (
                           <MovieDetail
                             id={bigMovieMatch.params.movieId}
-                            kind="now"
+                            kind={"movie"}
                           />
                         ) : null}
+                        <ModalCloseBtn onClick={onOverlayClick}>
+                          <FaWindowClose />
+                        </ModalCloseBtn>
                       </BigBox>
                     </>
                   )}
                 </AnimatePresence>
-                <MovieSlider kind="now" data={nowData} />
-                <MovieSlider kind="top" data={topMovieData} />
-                <MovieSlider kind="upcomming" data={upcomingData} />
               </>
             )}
           </Trailer>
