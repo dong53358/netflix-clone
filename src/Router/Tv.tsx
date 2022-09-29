@@ -4,10 +4,18 @@ import styled from "styled-components";
 import { getTvs, getTvVedio, IGetTvResult, IGetVideosResult } from "../api";
 import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import { FaStar, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
+import {
+  FaInfoCircle,
+  FaVolumeMute,
+  FaVolumeUp,
+  FaWindowClose,
+} from "react-icons/fa";
 import TvSlider from "../Components/tv/TvSlider";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { mainMuteState, muteState, tvMainState } from "../Recoil/atom";
+import { mainMuteState, scrollState, tvMainState } from "../Recoil/atom";
+import { useMatch, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion, useScroll } from "framer-motion";
+import TvDetail from "../Components/tv/TvDetail";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -46,7 +54,8 @@ const Banner = styled.div`
   position: absolute;
   bottom: 0;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: flex-end;
   color: white;
   padding-bottom: 110px;
   padding-left: 60px;
@@ -59,6 +68,7 @@ const Title = styled.div`
   font-size: 68px;
   font-weight: 600;
   margin-right: 30px;
+  margin-bottom: 20px;
 `;
 
 const MuteBtn = styled.div`
@@ -80,16 +90,68 @@ const MuteBtn = styled.div`
     background-color: rgba(255, 255, 255, 0.8);
   }
 `;
-
-const Overview = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 40px;
-  font-weight: 600;
-  color: red;
-  margin-bottom: 10px;
+const Info = styled.div`
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 200px;
+    background-color: rgba(91, 91, 90, 0.8);
+    border-radius: 4px;
+    border: none;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    &:hover {
+      background-color: rgba(91, 91, 90, 0.3);
+    }
+    &:active {
+      opacity: 0.8;
+      border: 1px solid white;
+    }
+    span {
+      margin-left: 10px;
+      font-size: 23px;
+    }
+  }
 `;
 
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+`;
+
+const BigBox = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 48vw;
+  height: 100vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: ${(props) => props.theme.black.lighter};
+  border-radius: 20px;
+  z-index: 9999;
+`;
+
+const ModalCloseBtn = styled.div`
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 30px;
+  &:hover {
+    opacity: 0.7;
+  }
+  &:active {
+    opacity: 1;
+  }
+`;
 function Tv() {
   const { data: popularData, isLoading: popularDataLoding } =
     useQuery<IGetTvResult>(["tv", "popular"], () => getTvs("popular"));
@@ -107,9 +169,32 @@ function Tv() {
     useQuery<IGetTvResult>(["tv", "top_rated"], () => getTvs("top_rated"));
 
   const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
+  const bigTvMatch = useMatch("/tv/:tvId");
+  const [scrollFixed, setScrollFixed] = useRecoilState(scrollState);
+  const navigate = useNavigate();
 
+  const onInfoClicked = (tvId: number) => {
+    navigate(`/tv/${tvId}`);
+    setIsMainMute(true);
+    setScrollFixed(true);
+    //document.body.style.overflow = "hidden";
+  };
   const mainMuteBtn = () => {
     setIsMainMute((prev) => !prev);
+  };
+  const onOverlayClick = () => {
+    navigate("/tv");
+    setScrollFixed(false);
+    //document.body.style.overflow = "unset";
+  };
+
+  const { scrollY } = useScroll();
+  //const setScrollY = useTransform(scrollY, (value) => value + 30);
+  const onBoxClicked = (tvId: number) => {
+    navigate(`/tv/${tvId}`);
+    setIsMainMute(true);
+    setScrollFixed(true);
+    //document.body.style.overflow = "hidden";
   };
   return (
     <Wrapper>
@@ -135,8 +220,8 @@ function Tv() {
                     playing={true}
                     muted={false}
                     loop={true}
-                    width="100%"
-                    height="calc(110vh)"
+                    width="calc(120vw)"
+                    height="calc(120vh)"
                     pip={false}
                     playsinline={false}
                   ></ReactPlayer>
@@ -147,15 +232,57 @@ function Tv() {
                         {isMainMute ? <FaVolumeMute /> : <FaVolumeUp />}
                       </MuteBtn>
                     </Title>
-                    <Overview>
-                      <FaStar />
-                      {popularData?.results[1].vote_average}
-                    </Overview>
+                    <Info>
+                      <button
+                        onClick={() => onInfoClicked(nowData?.results[0].id)}
+                        type="button"
+                      >
+                        <FaInfoCircle />
+                        <span>상세 정보</span>
+                      </button>
+                    </Info>
                   </Banner>
                 </Video>
-                <TvSlider kind="on_the_air" data={nowData} />
-                <TvSlider kind="top_rated" data={topTvData} />
-                <TvSlider kind="popular" data={popularData} />
+                <TvSlider
+                  kind="on_the_air"
+                  data={nowData}
+                  onBoxClicked={onBoxClicked}
+                />
+                <TvSlider
+                  kind="top_rated"
+                  data={topTvData}
+                  onBoxClicked={onBoxClicked}
+                />
+                <TvSlider
+                  kind="popular"
+                  data={popularData}
+                  onBoxClicked={onBoxClicked}
+                />
+                <AnimatePresence>
+                  {bigTvMatch && (
+                    <>
+                      <Overlay
+                        onClick={onOverlayClick}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      />
+                      <BigBox
+                        layoutId={bigTvMatch?.params.tvId}
+                        style={{
+                          top: scrollY.get() + 30,
+                        }}
+                      >
+                        {bigTvMatch ? (
+                          <TvDetail id={bigTvMatch.params.tvId} kind={"tv"} />
+                        ) : null}
+                        <ModalCloseBtn onClick={onOverlayClick}>
+                          <FaWindowClose />
+                        </ModalCloseBtn>
+                      </BigBox>
+                    </>
+                  )}
+                </AnimatePresence>
               </>
             )}
           </Trailer>

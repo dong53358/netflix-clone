@@ -189,7 +189,7 @@ function MovieSlider({ kind, data, onBoxClicked }: IProps) {
   const decreaseIndex = () => {
     if (data) {
       if (leaving) return;
-      setIsReverse(true);
+      setIsReverse(() => true);
       toggleLeaving();
       const totalMocies = data?.results.length - 1;
       const maxIndex = Math.floor(totalMocies / offset) - 1;
@@ -199,15 +199,13 @@ function MovieSlider({ kind, data, onBoxClicked }: IProps) {
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
-
-      setIsReverse(false);
+      setIsReverse(() => false);
       toggleLeaving();
       const totalMocies = data?.results.length - 1;
       const maxIndex = Math.floor(totalMocies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
-  console.log(isReverse);
   return (
     <>
       <Slider>

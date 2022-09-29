@@ -1,10 +1,11 @@
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
-import { FaAngleRight, FaStar } from "react-icons/fa";
+import { FaAngleLeft, FaAngleRight, FaStar } from "react-icons/fa";
 import { useMatch, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { IGetTvResult } from "../../api";
+import useWindowDimensions from "../../hooks/useWidowDimensions";
 import { mainMuteState } from "../../Recoil/atom";
 import { makeImagePath } from "../../utils";
 import TvDetail from "./TvDetail";
@@ -31,20 +32,38 @@ const Row = styled(motion.div)`
   padding: 15px 40px;
 `;
 
-const NextPage = styled.div`
+const BeforePage = styled.div`
   background-color: rgba(255, 255, 255, 0.3);
   height: 101%;
   width: 40px;
   position: absolute;
-  right: 40px;
+  left: 0px;
   top: 25%;
   z-index: 10;
-  color: black;
+  color: white;
   font-size: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  border-radius: 5px;
+`;
+
+const NextPage = styled.div`
+  background-color: rgba(255, 255, 255, 0.3);
+  height: 101%;
+  width: 40px;
+  position: absolute;
+  right: 0px;
+  top: 25%;
+  z-index: 10;
+  color: white;
+  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 5px;
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -102,39 +121,16 @@ const Info = styled(motion.div)`
   }
 `;
 
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-
-const BigBox = styled(motion.div)`
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  width: 48vw;
-  height: 100vh;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  background-color: ${(props) => props.theme.black.lighter};
-  border-radius: 20px;
-  //overflow: hidden;
-`;
-
 const rowVariants = {
-  hidden: {
-    x: window.outerWidth - 75,
-  },
+  hidden: ({ width, isReverse }: { width: number; isReverse: boolean }) => ({
+    x: isReverse ? -width + 75 : width - 75,
+  }),
   visible: {
     x: 0,
   },
-  exit: {
-    x: -window.outerWidth + 75,
-  },
+  exit: ({ width, isReverse }: { width: number; isReverse: boolean }) => ({
+    x: isReverse ? width - 75 : -width + 75,
+  }),
 };
 
 const boxVarints = {
@@ -168,9 +164,10 @@ const offset = 6;
 interface IProps {
   kind: string;
   data?: IGetTvResult;
+  onBoxClicked: Function;
 }
 
-function TvSlider({ kind, data }: IProps) {
+function TvSlider({ kind, data, onBoxClicked }: IProps) {
   const [titmeName, setTitleName] = useState("");
 
   useEffect(() => {
@@ -187,46 +184,46 @@ function TvSlider({ kind, data }: IProps) {
     }
   }, [kind]);
 
-  const navigate = useNavigate();
-  const bigTvMatch = useMatch("/tv/:tvId");
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const [isReverse, setIsReverse] = useState(false);
+  const width = useWindowDimensions();
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
+  };
+  const decreaseIndex = () => {
+    if (data) {
+      if (leaving) return;
+      setIsReverse(() => true);
+      toggleLeaving();
+      const totalMocies = data?.results.length - 1;
+      const maxIndex = Math.floor(totalMocies / offset) - 1;
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+    }
   };
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
+      setIsReverse(() => false);
       toggleLeaving();
       const totalMocies = data?.results.length - 1;
       const maxIndex = Math.floor(totalMocies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
-  const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
-  const onBoxClicked = (tvId: number) => {
-    navigate(`/tv/${tvId}`);
-    setIsMainMute(true);
-  };
-  const { scrollY } = useScroll();
-  const onOverlayClick = () => {
-    navigate("/tv");
-  };
   return (
     <>
       <Slider>
         <SliderName>{titmeName}</SliderName>
-        <NextPage onClick={increaseIndex}>
-          <FaAngleRight />
-        </NextPage>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
           <Row
             variants={rowVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            transition={{ type: "tween", duration: 1 }}
+            transition={{ type: "tween", duration: 0.6 }}
             key={index}
+            custom={{ width, isReverse }}
           >
             {data?.results
               .slice(1)
@@ -259,29 +256,13 @@ function TvSlider({ kind, data }: IProps) {
               ))}
           </Row>
         </AnimatePresence>
+        <BeforePage onClick={decreaseIndex}>
+          <FaAngleLeft />
+        </BeforePage>
+        <NextPage onClick={increaseIndex}>
+          <FaAngleRight />
+        </NextPage>
       </Slider>
-      <AnimatePresence>
-        {bigTvMatch && (
-          <>
-            <Overlay
-              onClick={onOverlayClick}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <BigBox
-              layoutId={bigTvMatch?.params.tvId + kind}
-              style={{
-                top: scrollY.get() + 50,
-              }}
-            >
-              {bigTvMatch ? (
-                <TvDetail id={bigTvMatch.params.tvId} kind={kind} />
-              ) : null}
-            </BigBox>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }

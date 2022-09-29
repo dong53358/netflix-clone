@@ -99,7 +99,7 @@ const Overview = styled.p`
   font-size: 25px;
   font-weight: 300;
   width: 50%;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `;
 
 const Info = styled.div`

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { AnimatePresence } from "framer-motion";
 import {
-  cast,
+  castMovie,
   getMovieDetails,
   getMovieVedio2,
   ICast,
@@ -30,6 +30,7 @@ const BigBox = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 10px;
+  overflow: hidden;
 `;
 const Video = styled.div`
   width: 100%;
@@ -151,7 +152,7 @@ function MovieDetail({ id, kind }: IProps) {
     );
   const { data: castData, isLoading: castDataLoading } = useQuery<ICast>(
     ["cast"],
-    () => cast(id)
+    () => castMovie(id)
   );
   const [netflix] = useState("rGrxaNUPozA");
   const [isMute, setIsMute] = useRecoilState(muteState);

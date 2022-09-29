@@ -39,6 +39,9 @@ export interface IGetDetailTvs {
   id: string;
   name: string;
   overview: string;
+  first_air_date: string;
+  number_of_episodes: number;
+  number_of_seasons: number;
 }
 export interface IGenres {
   id: number;
@@ -159,8 +162,13 @@ export function search(query: string) {
   ).then((response) => response.json());
 }
 
-export function cast(movieId: string) {
+export function castMovie(movieId: string) {
   return fetch(
     `${BASE_PATH}movie/${movieId}/credits?api_key=${API_KEY}&language=ko`
+  ).then((response) => response.json());
+}
+export function castTv(tvId: string) {
+  return fetch(
+    `${BASE_PATH}tv/${tvId}/credits?api_key=${API_KEY}&language=ko`
   ).then((response) => response.json());
 }
