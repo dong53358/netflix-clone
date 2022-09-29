@@ -1,11 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { FaAngleRight, FaStar } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { FaAngleLeft, FaAngleRight, FaStar } from "react-icons/fa";
 import styled from "styled-components";
 import { IGetMoviesResult } from "../../api";
-import { mainMuteState, scrollState } from "../../Recoil/atom";
+import useWindowDimensions from "../../hooks/useWidowDimensions";
 import { makeImagePath } from "../../utils";
 
 const Slider = styled.div`
@@ -29,21 +27,38 @@ const Row = styled(motion.div)`
   width: 100%;
   padding: 15px 40px;
 `;
+const BeforePage = styled.div`
+  background-color: rgba(255, 255, 255, 0.3);
+  height: 101%;
+  width: 40px;
+  position: absolute;
+  left: 0px;
+  top: 25%;
+  z-index: 10;
+  color: white;
+  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 5px;
+`;
 
 const NextPage = styled.div`
   background-color: rgba(255, 255, 255, 0.3);
   height: 101%;
   width: 40px;
   position: absolute;
-  right: 40px;
+  right: 0px;
   top: 25%;
   z-index: 10;
-  color: black;
+  color: white;
   font-size: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  border-radius: 5px;
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -102,15 +117,15 @@ const Info = styled(motion.div)`
 `;
 
 const rowVariants = {
-  hidden: {
-    x: window.outerWidth - 75,
-  },
+  hidden: ({ width, isReverse }: { width: number; isReverse: boolean }) => ({
+    x: isReverse ? -width + 75 : width - 75,
+  }),
   visible: {
     x: 0,
   },
-  exit: {
-    x: -window.outerWidth + 75,
-  },
+  exit: ({ width, isReverse }: { width: number; isReverse: boolean }) => ({
+    x: isReverse ? width - 75 : -width + 75,
+  }),
 };
 
 const boxVarints = {
@@ -164,44 +179,48 @@ function MovieSlider({ kind, data, onBoxClicked }: IProps) {
     }
   }, [kind]);
 
-  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
-  const [scrollFixed, setScrollFixed] = useRecoilState(scrollState);
+  const [isReverse, setIsReverse] = useState(false);
+  const width = useWindowDimensions();
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
+  };
+  const decreaseIndex = () => {
+    if (data) {
+      if (leaving) return;
+      setIsReverse(true);
+      toggleLeaving();
+      const totalMocies = data?.results.length - 1;
+      const maxIndex = Math.floor(totalMocies / offset) - 1;
+      setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+    }
   };
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
+
+      setIsReverse(false);
       toggleLeaving();
       const totalMocies = data?.results.length - 1;
       const maxIndex = Math.floor(totalMocies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
-  const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
-  // const onBoxClicked = (movieId: number) => {
-  //   navigate(`/movies/${movieId}`);
-  //   setIsMainMute(true);
-  //   setScrollFixed(true);
-  //   //document.body.style.overflow = "hidden";
-  // };
+  console.log(isReverse);
   return (
     <>
       <Slider>
         <SliderName>{titmeName}</SliderName>
-        <NextPage onClick={increaseIndex}>
-          <FaAngleRight />
-        </NextPage>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
           <Row
             variants={rowVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            transition={{ type: "tween", duration: 1 }}
+            transition={{ type: "tween", duration: 0.6 }}
             key={index}
+            custom={{ width, isReverse }}
           >
             {data?.results
               .slice(1)
@@ -234,6 +253,12 @@ function MovieSlider({ kind, data, onBoxClicked }: IProps) {
               ))}
           </Row>
         </AnimatePresence>
+        <BeforePage onClick={decreaseIndex}>
+          <FaAngleLeft />
+        </BeforePage>
+        <NextPage onClick={increaseIndex}>
+          <FaAngleRight />
+        </NextPage>
       </Slider>
     </>
   );
