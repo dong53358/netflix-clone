@@ -11,7 +11,6 @@ import {
 import { useQuery } from "react-query";
 import { makeTrailerPath } from "../../utils";
 import ReactPlayer from "react-player";
-import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { muteState } from "../../Recoil/atom";
 import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
@@ -154,13 +153,12 @@ function TvDetail({ id, kind }: IProps) {
     ["cast"],
     () => castTv(id)
   );
-  const [netflix, setNetflix] = useState("rGrxaNUPozA");
+  const netflix = "rGrxaNUPozA";
   const [isMute, setIsMute] = useRecoilState(muteState);
 
   const muteBtn = () => {
     setIsMute((prev) => !prev);
   };
-  console.log(detailData);
   return (
     <AnimatePresence>
       {detailDataLoding && trailerDataLoding && castDataLoading ? (
@@ -171,7 +169,7 @@ function TvDetail({ id, kind }: IProps) {
             <Video>
               <ReactPlayer
                 url={
-                  trailerData?.results[0] === undefined
+                  trailerData?.results[0] == undefined
                     ? makeTrailerPath(netflix)
                     : makeTrailerPath(trailerData?.results[0].key || "")
                 }
@@ -229,9 +227,11 @@ function TvDetail({ id, kind }: IProps) {
                   </div>
                   <div>
                     <Dark>장르</Dark> :{" "}
-                    {detailData?.genres.map((genre) => (
-                      <span key={genre?.id}>{genre?.name}, </span>
-                    ))}
+                    {detailData === undefined
+                      ? detailData?.genres.map((genre) => (
+                          <span key={genre?.id}>{genre?.name}, </span>
+                        ))
+                      : null}
                   </div>
                 </Right>
               </Detail>

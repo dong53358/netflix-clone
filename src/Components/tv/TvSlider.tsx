@@ -1,14 +1,10 @@
-import { AnimatePresence, motion, useScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaAngleLeft, FaAngleRight, FaStar } from "react-icons/fa";
-import { useMatch, useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { IGetTvResult } from "../../api";
 import useWindowDimensions from "../../hooks/useWidowDimensions";
-import { mainMuteState } from "../../Recoil/atom";
 import { makeImagePath } from "../../utils";
-import TvDetail from "./TvDetail";
 
 const Slider = styled.div`
   position: relative;

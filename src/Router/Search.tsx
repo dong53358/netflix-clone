@@ -5,7 +5,8 @@ import { useQuery } from "react-query";
 import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ISearch, search } from "../api";
-import SearchDetail from "../Components/search/SearchDetail";
+import MovieDetail from "../Components/movie/MovieDetail";
+import TvDetail from "../Components/tv/TvDetail";
 import { makeImagePath } from "../utils";
 
 const Wrapper = styled.div`
@@ -117,7 +118,17 @@ const BigBox = styled(motion.div)`
   background-color: ${(props) => props.theme.black.lighter};
   border-radius: 20px;
   z-index: 9999;
-  //overflow: hidden;
+  overflow: hidden;
+`;
+
+const NoData = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 50px;
+  font-weight: bold;
 `;
 
 const boxVarints = {
@@ -156,6 +167,11 @@ function Search() {
   const { data, isLoading } = useQuery<ISearch>(["search"], () =>
     search(keyword)
   );
+  const findId = (element) => {
+    if (element.id == searchMatch?.params.searchId) {
+      return true;
+    }
+  };
   const onBoxClicked = (searchId: number) => {
     navigate(`/search/${searchId}`);
     setClickKeyword(keyword);
@@ -163,6 +179,7 @@ function Search() {
   const onOverlayClick = () => {
     navigate(`/search?keyword=${clickKeyword}`);
   };
+
   return (
     <Wrapper>
       {isLoading ? (
@@ -217,13 +234,20 @@ function Search() {
                 <BigBox
                   layoutId={searchMatch?.params.searchId}
                   style={{
-                    top: scrollY.get() + 50,
+                    top: scrollY.get() + 30,
                   }}
                 >
-                  {searchMatch ? (
-                    <SearchDetail id={searchMatch.params.searchId} />
-                  ) : //<div>hello</div>
-                  null}
+                  {searchMatch &&
+                  data?.results.find(findId).media_type == "movie" ? (
+                    <MovieDetail
+                      id={searchMatch.params.searchId}
+                      kind={"movie"}
+                    />
+                  ) : data?.results.find(findId).media_type == "tv" ? (
+                    <TvDetail id={searchMatch.params.searchId} kind={"tv"} />
+                  ) : (
+                    <NoData>등록정보없음</NoData>
+                  )}
                 </BigBox>
               </>
             )}

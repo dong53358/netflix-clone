@@ -219,9 +219,11 @@ function MovieDetail({ id, kind }: IProps) {
                   </div>
                   <div>
                     <Dark>장르</Dark> :{" "}
-                    {detailData?.genres.map((genre) => (
-                      <span key={genre?.id}>{genre?.name}, </span>
-                    ))}
+                    {detailData === undefined
+                      ? detailData?.genres.map((genre) => (
+                          <span key={genre?.id}>{genre?.name}, </span>
+                        ))
+                      : null}
                   </div>
                 </Right>
               </Detail>

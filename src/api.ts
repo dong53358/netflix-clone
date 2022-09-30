@@ -92,6 +92,7 @@ export interface ISearchData {
   title: string;
   overview: string;
   vote_average: number;
+  media_type: string;
 }
 
 export interface ICast {
