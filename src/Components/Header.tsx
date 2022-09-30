@@ -15,7 +15,7 @@ const Nav = styled(motion.nav)`
   font-weight: 600;
   padding: 20px 60px;
   color: white;
-  z-index: 3000;
+  z-index: 9999;
 `;
 
 const Col = styled.div`
@@ -108,7 +108,7 @@ const navVariants = {
     backgroundColor: "rgba(0, 0, 0, 0)",
   },
   scroll: {
-    backgroundColor: "rgba(0, 0, 0, 1)",
+    backgroundColor: "rgba(20, 20, 20, 1)",
   },
 };
 
@@ -120,7 +120,6 @@ function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/movies");
   const tvMatch = useMatch("tv");
-  const openSearch = () => setSearchOpen((prev) => !prev);
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
@@ -143,7 +142,7 @@ function Header() {
         navAnimation.start("top");
       }
     });
-  }, [scrollY, navAnimation]);
+  }, [scrollY]);
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = (data: IForm) => {

@@ -215,7 +215,11 @@ function TvSlider({ kind, data, onBoxClicked }: IProps) {
     <>
       <Slider>
         <SliderName>{titmeName}</SliderName>
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+        <AnimatePresence
+          initial={false}
+          onExitComplete={toggleLeaving}
+          custom={{ width, isReverse }}
+        >
           <Row
             variants={rowVariants}
             initial="hidden"

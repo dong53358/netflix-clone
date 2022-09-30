@@ -25,8 +25,3 @@ export const tvMainState = atom<string>({
   default: "",
   effects_UNSTABLE: [persistAtom],
 });
-export const scrollState = atom<boolean>({
-  key: "scroll",
-  default: false,
-  effects_UNSTABLE: [persistAtom],
-});

@@ -12,13 +12,12 @@ import {
 } from "react-icons/fa";
 import TvSlider from "../Components/tv/TvSlider";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { mainMuteState, scrollState, tvMainState } from "../Recoil/atom";
+import { mainMuteState, tvMainState } from "../Recoil/atom";
 import { useMatch, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import TvDetail from "../Components/tv/TvDetail";
 
 const Wrapper = styled.div`
-  background-color: black;
   height: 200vh;
   width: 100vw;
 `;
@@ -170,13 +169,11 @@ function Tv() {
 
   const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
   const bigTvMatch = useMatch("/tv/:tvId");
-  const [scrollFixed, setScrollFixed] = useRecoilState(scrollState);
   const navigate = useNavigate();
 
   const onInfoClicked = (tvId: number) => {
     navigate(`/tv/${tvId}`);
     setIsMainMute(true);
-    setScrollFixed(true);
     //document.body.style.overflow = "hidden";
   };
   const mainMuteBtn = () => {
@@ -184,7 +181,6 @@ function Tv() {
   };
   const onOverlayClick = () => {
     navigate("/tv");
-    setScrollFixed(false);
     //document.body.style.overflow = "unset";
   };
 
@@ -193,7 +189,6 @@ function Tv() {
   const onBoxClicked = (tvId: number) => {
     navigate(`/tv/${tvId}`);
     setIsMainMute(true);
-    setScrollFixed(true);
     //document.body.style.overflow = "hidden";
   };
   return (

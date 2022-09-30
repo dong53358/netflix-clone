@@ -11,7 +11,7 @@ import { makeTrailerPath } from "../utils";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import MovieSlider from "../Components/movie/MovieSlider";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { mainMuteState, movieMainState, scrollState } from "../Recoil/atom";
+import { mainMuteState, movieMainState } from "../Recoil/atom";
 import {
   FaInfoCircle,
   FaVolumeMute,
@@ -22,11 +22,10 @@ import { useMatch, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import MovieDetail from "../Components/movie/MovieDetail";
 
-const Wrapper = styled.div<{ scroll: boolean }>`
-  background-color: black;
+const Wrapper = styled.div`
+  background-color: ${(props) => props.theme.black.veryDark};
   height: 200vh;
   width: 100vw;
-  overflow: ${(props) => (props.scroll ? "hidden" : "visible")};
 `;
 
 const Trailer = styled.div`
@@ -182,11 +181,9 @@ function Home() {
   const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
   const bigMovieMatch = useMatch("/movies/:movieId");
   const navigate = useNavigate();
-  const [scrollFixed, setScrollFixed] = useRecoilState(scrollState);
   const onInfoClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
     setIsMainMute(true);
-    setScrollFixed(true);
     //document.body.style.overflow = "hidden";
   };
   const mainMuteBtn = () => {
@@ -195,7 +192,6 @@ function Home() {
 
   const onOverlayClick = () => {
     navigate("/movies");
-    setScrollFixed(false);
     //document.body.style.overflow = "unset";
   };
 
@@ -204,11 +200,10 @@ function Home() {
   const onBoxClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
     setIsMainMute(true);
-    setScrollFixed(true);
     //document.body.style.overflow = "hidden";
   };
   return (
-    <Wrapper scroll={scrollFixed}>
+    <Wrapper>
       {nowDataLoding &&
       trailerDataLoding &&
       topMovieDataLoding &&
