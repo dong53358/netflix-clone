@@ -228,10 +228,10 @@ function TvDetail({ id, kind }: IProps) {
                   <div>
                     <Dark>장르</Dark> :{" "}
                     {detailData === undefined
-                      ? detailData?.genres.map((genre) => (
+                      ? null
+                      : detailData?.genres.map((genre) => (
                           <span key={genre?.id}>{genre?.name}, </span>
-                        ))
-                      : null}
+                        ))}
                   </div>
                 </Right>
               </Detail>
