@@ -184,7 +184,6 @@ function Home() {
   const onInfoClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
     setIsMainMute(true);
-    //document.body.style.overflow = "hidden";
   };
   const mainMuteBtn = () => {
     setIsMainMute((prev) => !prev);
@@ -192,15 +191,12 @@ function Home() {
 
   const onOverlayClick = () => {
     navigate("/movies");
-    //document.body.style.overflow = "unset";
   };
 
   const { scrollY } = useScroll();
-  //const setScrollY = useTransform(scrollY, (value) => value + 30);
   const onBoxClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
     setIsMainMute(true);
-    //document.body.style.overflow = "hidden";
   };
   return (
     <Wrapper>
@@ -236,15 +232,15 @@ function Home() {
                   ></ReactPlayer>
                   <Banner>
                     <Title>
-                      {nowData?.results[0].title}
+                      {nowData?.results[1].title}
                       <MuteBtn onClick={mainMuteBtn}>
                         {isMainMute ? <FaVolumeMute /> : <FaVolumeUp />}
                       </MuteBtn>
                     </Title>
-                    <Overview>{nowData?.results[0].overview}</Overview>
+                    <Overview>{nowData?.results[1].overview}</Overview>
                     <Info>
                       <button
-                        onClick={() => onInfoClicked(nowData?.results[0].id)}
+                        onClick={() => onInfoClicked(nowData?.results[1].id)}
                         type="button"
                       >
                         <FaInfoCircle />

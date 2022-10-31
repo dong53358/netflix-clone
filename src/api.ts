@@ -143,9 +143,6 @@ export function getTvDetails(id: string) {
     (response) => response.json()
   );
 }
-// 토르 616037
-// 우영우 Id : 197067
-// 러브아일랜드 Id : 90521
 export function getTvVedio(tvId: string) {
   return fetch(`${BASE_PATH}tv/${tvId}/videos?api_key=${API_KEY}`).then(
     (response) => response.json()
