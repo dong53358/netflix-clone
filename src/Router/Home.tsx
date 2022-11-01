@@ -21,6 +21,7 @@ import {
 import { useMatch, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import MovieDetail from "../Components/movie/MovieDetail";
+import { useState } from "react";
 
 const Wrapper = styled.div`
   background-color: ${(props) => props.theme.black.veryDark};
@@ -181,6 +182,7 @@ function Home() {
   const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
   const bigMovieMatch = useMatch("/movies/:movieId");
   const navigate = useNavigate();
+  const [netflix] = useState("rGrxaNUPozA");
   const onInfoClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
     setIsMainMute(true);
@@ -219,7 +221,11 @@ function Home() {
                 </HelmetProvider>
                 <Video>
                   <ReactPlayer
-                    url={makeTrailerPath(trailerData?.results[0].key || "")}
+                    url={
+                      trailerData?.results[0] === undefined
+                        ? makeTrailerPath(netflix)
+                        : makeTrailerPath(trailerData?.results[0].key || "")
+                    }
                     volume={isMainMute ? 0 : 0.3}
                     controls={false}
                     playing={true}
@@ -232,15 +238,15 @@ function Home() {
                   ></ReactPlayer>
                   <Banner>
                     <Title>
-                      {nowData?.results[1].title}
+                      {nowData?.results[0].title}
                       <MuteBtn onClick={mainMuteBtn}>
                         {isMainMute ? <FaVolumeMute /> : <FaVolumeUp />}
                       </MuteBtn>
                     </Title>
-                    <Overview>{nowData?.results[1].overview}</Overview>
+                    <Overview>{nowData?.results[0].overview}</Overview>
                     <Info>
                       <button
-                        onClick={() => onInfoClicked(nowData?.results[1].id)}
+                        onClick={() => onInfoClicked(nowData?.results[0].id)}
                         type="button"
                       >
                         <FaInfoCircle />

@@ -15,6 +15,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { mainMuteState, tvMainState } from "../Recoil/atom";
 import { useMatch, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useScroll } from "framer-motion";
+import { useState } from "react";
 import TvDetail from "../Components/tv/TvDetail";
 
 const Wrapper = styled.div`
@@ -170,7 +171,7 @@ function Tv() {
   const [isMainMute, setIsMainMute] = useRecoilState(mainMuteState);
   const bigTvMatch = useMatch("/tv/:tvId");
   const navigate = useNavigate();
-
+  const [netflix] = useState("rGrxaNUPozA");
   const onInfoClicked = (tvId: number) => {
     navigate(`/tv/${tvId}`);
     setIsMainMute(true);
@@ -209,7 +210,11 @@ function Tv() {
                 </HelmetProvider>
                 <Video>
                   <ReactPlayer
-                    url={makeTrailerPath(tvTrailerData?.results[0].key || "")}
+                    url={
+                      tvTrailerData?.results[0] === undefined
+                        ? makeTrailerPath(netflix)
+                        : makeTrailerPath(tvTrailerData?.results[0].key || "")
+                    }
                     volume={isMainMute ? 0 : 0.3}
                     controls={false}
                     playing={true}
