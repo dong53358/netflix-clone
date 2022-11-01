@@ -227,14 +227,16 @@ function Tv() {
                   ></ReactPlayer>
                   <Banner>
                     <Title>
-                      {popularData?.results[1].name}
+                      {popularData?.results[0].name}
                       <MuteBtn onClick={mainMuteBtn}>
                         {isMainMute ? <FaVolumeMute /> : <FaVolumeUp />}
                       </MuteBtn>
                     </Title>
                     <Info>
                       <button
-                        onClick={() => onInfoClicked(nowData?.results[0].id)}
+                        onClick={() =>
+                          onInfoClicked(popularData?.results[0].id)
+                        }
                         type="button"
                       >
                         <FaInfoCircle />

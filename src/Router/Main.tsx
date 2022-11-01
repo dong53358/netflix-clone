@@ -88,7 +88,7 @@ function Main() {
   const [tvMainId, setTvMainId] = useRecoilState(tvMainState);
   useEffect(() => {
     setMovieMainId(String(nowData?.results[0].id));
-    setTvMainId(String(popularData?.results[1].id));
+    setTvMainId(String(popularData?.results[0].id));
   }, [nowData, popularData]);
 
   return (
