@@ -238,15 +238,15 @@ function Home() {
                   ></ReactPlayer>
                   <Banner>
                     <Title>
-                      {nowData?.results[0].title}
+                      {nowData?.results[1].title}
                       <MuteBtn onClick={mainMuteBtn}>
                         {isMainMute ? <FaVolumeMute /> : <FaVolumeUp />}
                       </MuteBtn>
                     </Title>
-                    <Overview>{nowData?.results[0].overview}</Overview>
+                    <Overview>{nowData?.results[1].overview}</Overview>
                     <Info>
                       <button
-                        onClick={() => onInfoClicked(nowData?.results[0].id)}
+                        onClick={() => onInfoClicked(nowData?.results[1].id)}
                         type="button"
                       >
                         <FaInfoCircle />
